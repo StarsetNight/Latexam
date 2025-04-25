@@ -18,7 +18,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Latexam 考试系统</string>
+   <string>Latexam 考试系统管理面板</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -605,7 +605,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
         </property>
         <property name="font">
          <font>
-          <pointsize>9</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
         <attribute name="headerVisible">
@@ -618,17 +618,17 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
         </column>
         <item>
          <property name="text">
-          <string>会话信息</string>
+          <string>会话状态</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>聊天室</string>
+          <string>考试情况</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>成员列表</string>
+          <string>试卷列表</string>
          </property>
         </item>
        </widget>
@@ -636,7 +636,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
       <item>
        <widget class="Line" name="line">
         <property name="orientation">
-         <enum>Qt::Vertical</enum>
+         <enum>Qt::Orientation::Vertical</enum>
         </property>
        </widget>
       </item>
@@ -656,7 +656,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
            </font>
           </property>
           <property name="inputMethodHints">
-           <set>Qt::ImhNone</set>
+           <set>Qt::InputMethodHint::ImhNone</set>
           </property>
           <property name="openExternalLinks">
            <bool>true</bool>
@@ -685,7 +685,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
             <item>
              <spacer name="horizontalSpacer">
               <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+               <enum>Qt::Orientation::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -696,7 +696,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="button_tool">
+             <widget class="QPushButton" name="button_objective">
               <property name="minimumSize">
                <size>
                 <width>60</width>
@@ -710,12 +710,12 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
                </size>
               </property>
               <property name="text">
-               <string>工具</string>
+               <string>客观题</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="button_manage">
+             <widget class="QPushButton" name="button_subjective">
               <property name="minimumSize">
                <size>
                 <width>60</width>
@@ -729,7 +729,45 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
                </size>
               </property>
               <property name="text">
-               <string>管理</string>
+               <string>主观题</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_confirm">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>确认</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="button_abort">
+              <property name="minimumSize">
+               <size>
+                <width>60</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>60</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>放弃</string>
               </property>
              </widget>
             </item>
@@ -777,25 +815,33 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <height>19</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="menu_session">
     <property name="title">
      <string>会话</string>
     </property>
     <addaction name="action_login"/>
-    <addaction name="action_sessionmgr"/>
     <addaction name="action_disconnect"/>
     <addaction name="separator"/>
     <addaction name="action_exit"/>
    </widget>
-   <widget class="QMenu" name="menu_2">
+   <widget class="QMenu" name="menu_about">
     <property name="title">
      <string>关于</string>
     </property>
     <addaction name="action_about"/>
     <addaction name="action"/>
    </widget>
-   <addaction name="menu"/>
-   <addaction name="menu_2"/>
+   <widget class="QMenu" name="menu_edit">
+    <property name="title">
+     <string>编辑</string>
+    </property>
+    <addaction name="action_newpaper"/>
+    <addaction name="action_editpaper"/>
+    <addaction name="action_fileexam"/>
+   </widget>
+   <addaction name="menu_session"/>
+   <addaction name="menu_edit"/>
+   <addaction name="menu_about"/>
   </widget>
   <action name="action_login">
    <property name="text">
@@ -814,12 +860,12 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
   </action>
   <action name="action_exit">
    <property name="text">
-    <string>退出Lhat</string>
+    <string>退出</string>
    </property>
   </action>
   <action name="action_about">
    <property name="text">
-    <string>关于Lhat</string>
+    <string>关于Latexam</string>
    </property>
   </action>
   <action name="action">
@@ -827,11 +873,31 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     <string>帮助</string>
    </property>
   </action>
+  <action name="action_newpaper">
+   <property name="text">
+    <string>新建试卷</string>
+   </property>
+  </action>
+  <action name="action_editpaper">
+   <property name="text">
+    <string>编辑试卷</string>
+   </property>
+  </action>
+  <action name="action_fileexam">
+   <property name="text">
+    <string>新建/编辑考试</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
-  <tabstop>input_message</tabstop>
-  <tabstop>output_message</tabstop>
   <tabstop>output_status</tabstop>
+  <tabstop>output_message</tabstop>
+  <tabstop>input_message</tabstop>
+  <tabstop>button_objective</tabstop>
+  <tabstop>button_subjective</tabstop>
+  <tabstop>button_confirm</tabstop>
+  <tabstop>button_abort</tabstop>
+  <tabstop>button_send</tabstop>
  </tabstops>
  <resources>
   <include location="Latexam.qrc"/>
@@ -857,7 +923,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
    <sender>button_send</sender>
    <signal>clicked()</signal>
    <receiver>LatexamWindow</receiver>
-   <slot>sendMessage()</slot>
+   <slot>onSend()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>747</x>
@@ -866,38 +932,6 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     <hint type="destinationlabel">
      <x>747</x>
      <y>439</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button_manage</sender>
-   <signal>clicked()</signal>
-   <receiver>LatexamWindow</receiver>
-   <slot>onManage()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>683</x>
-     <y>473</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>682</x>
-     <y>461</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button_tool</sender>
-   <signal>clicked()</signal>
-   <receiver>LatexamWindow</receiver>
-   <slot>onTool()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>616</x>
-     <y>472</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>600</x>
-     <y>457</y>
     </hint>
    </hints>
   </connection>
@@ -917,12 +951,78 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>button_abort</sender>
+   <signal>clicked()</signal>
+   <receiver>LatexamWindow</receiver>
+   <slot>onAbort()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>683</x>
+     <y>472</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>684</x>
+     <y>459</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_confirm</sender>
+   <signal>clicked()</signal>
+   <receiver>LatexamWindow</receiver>
+   <slot>onConfirm()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>608</x>
+     <y>473</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>459</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_subjective</sender>
+   <signal>clicked()</signal>
+   <receiver>LatexamWindow</receiver>
+   <slot>onSubjective()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>554</x>
+     <y>477</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>553</x>
+     <y>459</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_objective</sender>
+   <signal>clicked()</signal>
+   <receiver>LatexamWindow</receiver>
+   <slot>onObjective()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>486</x>
+     <y>473</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>446</x>
+     <y>461</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>triggeredMenubar(QAction*)</slot>
-  <slot>sendMessage()</slot>
-  <slot>onManage()</slot>
-  <slot>onTool()</slot>
+  <slot>onSend()</slot>
+  <slot>onAbort()</slot>
+  <slot>onConfirm()</slot>
   <slot>onStatusClicked(QTreeWidgetItem*)</slot>
+  <slot>onSubjective()</slot>
+  <slot>onObjective()</slot>
  </slots>
 </ui>

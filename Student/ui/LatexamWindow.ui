@@ -605,7 +605,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
         </property>
         <property name="font">
          <font>
-          <pointsize>9</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
         <attribute name="headerVisible">
@@ -618,17 +618,17 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
         </column>
         <item>
          <property name="text">
-          <string>会话信息</string>
+          <string>当前时间</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>聊天室</string>
+          <string>考试信息</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>成员列表</string>
+          <string>试卷信息</string>
          </property>
         </item>
        </widget>
@@ -636,7 +636,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
       <item>
        <widget class="Line" name="line">
         <property name="orientation">
-         <enum>Qt::Vertical</enum>
+         <enum>Qt::Orientation::Vertical</enum>
         </property>
        </widget>
       </item>
@@ -656,7 +656,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
            </font>
           </property>
           <property name="inputMethodHints">
-           <set>Qt::ImhNone</set>
+           <set>Qt::InputMethodHint::ImhNone</set>
           </property>
           <property name="openExternalLinks">
            <bool>true</bool>
@@ -685,7 +685,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
             <item>
              <spacer name="horizontalSpacer">
               <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+               <enum>Qt::Orientation::Horizontal</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -696,7 +696,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
              </spacer>
             </item>
             <item>
-             <widget class="QPushButton" name="button_tool">
+             <widget class="QPushButton" name="button_previous">
               <property name="minimumSize">
                <size>
                 <width>60</width>
@@ -710,12 +710,12 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
                </size>
               </property>
               <property name="text">
-               <string>工具</string>
+               <string>上一题</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="button_manage">
+             <widget class="QPushButton" name="button_next">
               <property name="minimumSize">
                <size>
                 <width>60</width>
@@ -729,12 +729,12 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
                </size>
               </property>
               <property name="text">
-               <string>管理</string>
+               <string>下一题</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="button_send">
+             <widget class="QPushButton" name="button_answer">
               <property name="minimumSize">
                <size>
                 <width>60</width>
@@ -748,7 +748,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
                </size>
               </property>
               <property name="text">
-               <string>发送</string>
+               <string>回答</string>
               </property>
               <property name="shortcut">
                <string>Ctrl+Return</string>
@@ -777,29 +777,28 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <height>19</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="menu_session">
     <property name="title">
      <string>会话</string>
     </property>
     <addaction name="action_login"/>
-    <addaction name="action_sessionmgr"/>
     <addaction name="action_disconnect"/>
     <addaction name="separator"/>
     <addaction name="action_exit"/>
    </widget>
-   <widget class="QMenu" name="menu_2">
+   <widget class="QMenu" name="menu_about">
     <property name="title">
      <string>关于</string>
     </property>
     <addaction name="action_about"/>
     <addaction name="action"/>
    </widget>
-   <addaction name="menu"/>
-   <addaction name="menu_2"/>
+   <addaction name="menu_session"/>
+   <addaction name="menu_about"/>
   </widget>
   <action name="action_login">
    <property name="text">
-    <string>连接会话</string>
+    <string>加入考试</string>
    </property>
   </action>
   <action name="action_sessionmgr">
@@ -814,12 +813,12 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
   </action>
   <action name="action_exit">
    <property name="text">
-    <string>退出Lhat</string>
+    <string>退出</string>
    </property>
   </action>
   <action name="action_about">
    <property name="text">
-    <string>关于Lhat</string>
+    <string>关于Latexam</string>
    </property>
   </action>
   <action name="action">
@@ -854,7 +853,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
    </hints>
   </connection>
   <connection>
-   <sender>button_send</sender>
+   <sender>button_answer</sender>
    <signal>clicked()</signal>
    <receiver>LatexamWindow</receiver>
    <slot>sendMessage()</slot>
@@ -870,7 +869,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
    </hints>
   </connection>
   <connection>
-   <sender>button_manage</sender>
+   <sender>button_next</sender>
    <signal>clicked()</signal>
    <receiver>LatexamWindow</receiver>
    <slot>onManage()</slot>
@@ -886,7 +885,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
    </hints>
   </connection>
   <connection>
-   <sender>button_tool</sender>
+   <sender>button_previous</sender>
    <signal>clicked()</signal>
    <receiver>LatexamWindow</receiver>
    <slot>onTool()</slot>
