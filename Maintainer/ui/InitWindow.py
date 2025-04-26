@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
     QTreeWidgetItem,
     QWidget,
     QFileDialog,
+    QInputDialog,
 )
 
 from PySide6.QtGui import QAction
@@ -19,6 +20,11 @@ from PySide6.QtGui import QAction
 from .AboutWindow import Ui_AboutWindow
 from .LatexamWindow import Ui_LatexamWindow
 from .LoginDialog import Ui_LoginWindow
+
+from models.BaseModel import *
+from models.ExamData import *
+from models.ProtoModels import *
+
 
 VERSION = "v1.0.0 Alpha"
 
@@ -38,6 +44,9 @@ class LatexamApplication(QMainWindow):
     username: str
     number: str
     password: str
+    paper: Paper
+    paper_path: str
+    exam: Exam
 
     def __init__(self):
         super().__init__()
@@ -75,7 +84,7 @@ class LatexamApplication(QMainWindow):
             case "退出":
                 self.onExit()
             case "新建试卷":
-                pass
+                self.onNewPaper()
             case "编辑试卷":
                 pass
             case "新建/编辑考试":
@@ -105,7 +114,15 @@ class LatexamApplication(QMainWindow):
     def onNewPaper(self) -> None:
         if not (directory := QFileDialog.getExistingDirectory(self, "选择试卷保存路径", "papers/")):
             return
-        # TODO 新建试卷
+        if not (title := QInputDialog.getText(self, "Latexam - 新建试卷", "请输入试卷标题")[0]):
+            return
+        if not (number := QInputDialog.getText(self, "Latexam - 新建试卷", "请输入试卷序列号")[0]):
+            return
+        self.paper = Paper(serial_number=number, title=title, questions=[])
+        self.paper_path = directory
+        QMessageBox.information(self, "Latexam - 新建试卷", f"试卷 {title} 已创建，"
+                                                            f"序列号为 {number}。\n"
+                                                            f"选择工具栏 编辑 -> 编辑试卷 来编辑试卷内容。")
 
 
     def onPrevious(self) -> None:
