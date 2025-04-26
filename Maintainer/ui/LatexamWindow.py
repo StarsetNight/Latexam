@@ -669,14 +669,13 @@ class Ui_LatexamWindow(object):
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.output_message = QTextBrowser(self.centralwidget)
         self.output_message.setObjectName(u"output_message")
+        self.output_message.setEnabled(True)
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(200)
         sizePolicy1.setHeightForWidth(self.output_message.sizePolicy().hasHeightForWidth())
         self.output_message.setSizePolicy(sizePolicy1)
-        font1 = QFont()
-        font1.setPointSize(9)
-        self.output_message.setFont(font1)
+        self.output_message.setFont(font)
         self.output_message.setInputMethodHints(Qt.InputMethodHint.ImhNone)
         self.output_message.setOpenExternalLinks(True)
 
@@ -686,7 +685,10 @@ class Ui_LatexamWindow(object):
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.input_message = QPlainTextEdit(self.centralwidget)
         self.input_message.setObjectName(u"input_message")
+        self.input_message.setEnabled(False)
         self.input_message.setMaximumSize(QSize(16777215, 109))
+        font1 = QFont()
+        font1.setPointSize(9)
         self.input_message.setFont(font1)
 
         self.verticalLayout_2.addWidget(self.input_message)
@@ -697,8 +699,25 @@ class Ui_LatexamWindow(object):
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
+        self.button_previous = QPushButton(self.centralwidget)
+        self.button_previous.setObjectName(u"button_previous")
+        self.button_previous.setEnabled(False)
+        self.button_previous.setMinimumSize(QSize(60, 25))
+        self.button_previous.setMaximumSize(QSize(60, 25))
+
+        self.horizontalLayout.addWidget(self.button_previous)
+
+        self.button_next = QPushButton(self.centralwidget)
+        self.button_next.setObjectName(u"button_next")
+        self.button_next.setEnabled(False)
+        self.button_next.setMinimumSize(QSize(60, 25))
+        self.button_next.setMaximumSize(QSize(60, 25))
+
+        self.horizontalLayout.addWidget(self.button_next)
+
         self.button_objective = QPushButton(self.centralwidget)
         self.button_objective.setObjectName(u"button_objective")
+        self.button_objective.setEnabled(False)
         self.button_objective.setMinimumSize(QSize(60, 25))
         self.button_objective.setMaximumSize(QSize(60, 25))
 
@@ -706,6 +725,7 @@ class Ui_LatexamWindow(object):
 
         self.button_subjective = QPushButton(self.centralwidget)
         self.button_subjective.setObjectName(u"button_subjective")
+        self.button_subjective.setEnabled(False)
         self.button_subjective.setMinimumSize(QSize(60, 25))
         self.button_subjective.setMaximumSize(QSize(60, 25))
 
@@ -713,6 +733,7 @@ class Ui_LatexamWindow(object):
 
         self.button_confirm = QPushButton(self.centralwidget)
         self.button_confirm.setObjectName(u"button_confirm")
+        self.button_confirm.setEnabled(False)
         self.button_confirm.setMinimumSize(QSize(60, 25))
         self.button_confirm.setMaximumSize(QSize(60, 25))
 
@@ -720,6 +741,7 @@ class Ui_LatexamWindow(object):
 
         self.button_abort = QPushButton(self.centralwidget)
         self.button_abort.setObjectName(u"button_abort")
+        self.button_abort.setEnabled(False)
         self.button_abort.setMinimumSize(QSize(60, 25))
         self.button_abort.setMaximumSize(QSize(60, 25))
 
@@ -727,6 +749,7 @@ class Ui_LatexamWindow(object):
 
         self.button_send = QPushButton(self.centralwidget)
         self.button_send.setObjectName(u"button_send")
+        self.button_send.setEnabled(False)
         self.button_send.setMinimumSize(QSize(60, 25))
         self.button_send.setMaximumSize(QSize(60, 25))
 
@@ -789,6 +812,8 @@ class Ui_LatexamWindow(object):
         self.button_confirm.clicked.connect(LatexamWindow.onConfirm)
         self.button_subjective.clicked.connect(LatexamWindow.onSubjective)
         self.button_objective.clicked.connect(LatexamWindow.onObjective)
+        self.button_next.clicked.connect(LatexamWindow.onNext)
+        self.button_previous.clicked.connect(LatexamWindow.onPrevious)
 
         QMetaObject.connectSlotsByName(LatexamWindow)
     # setupUi
@@ -815,6 +840,27 @@ class Ui_LatexamWindow(object):
         ___qtreewidgetitem2.setText(0, QCoreApplication.translate("LatexamWindow", u"\u8bd5\u5377\u5217\u8868", None));
         self.output_status.setSortingEnabled(__sortingEnabled)
 
+        self.output_message.setHtml(QCoreApplication.translate("LatexamWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:700;\">\u6b22\u8fce\u8bbf\u95ee Latexam \u8003\u8bd5\u7cfb\u7edf\u7ba1\u7406\u9762\u677f\uff01</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:700;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px;"
+                        " margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">\u6b32</span><span style=\" font-size:14pt; color:#ffaa00;\">\u8fde\u63a5\u5230\u4e00\u4e2a\u670d\u52a1\u5668</span><span style=\" font-size:14pt;\">\uff0c\u8bf7\u70b9\u9009\u5de5\u5177\u680f </span><span style=\" font-size:14pt; color:#5500ff;\">\u4f1a\u8bdd -&gt; \u8fde\u63a5\u4f1a\u8bdd</span><span style=\" font-size:14pt;\">\uff1b</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">\u6b32</span><span style=\" font-size:14pt; color:#ffaa00;\">\u65b0\u5efa\u4e00\u5957\u8bd5\u5377</span><span style=\" font-size:14pt;\">\uff0c\u8bf7\u70b9\u9009\u5de5\u5177\u680f </span><span style=\" font-size:14pt; color:#5500ff;\""
+                        ">\u7f16\u8f91 -&gt; \u65b0\u5efa\u8bd5\u5377</span><span style=\" font-size:14pt;\">\uff1b</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">\u6b32</span><span style=\" font-size:14pt; color:#ffaa00;\">\u542f\u52a8\u4e00\u573a\u8003\u8bd5</span><span style=\" font-size:14pt;\">\uff0c\u8bf7\u70b9\u9009\u5de5\u5177\u680f </span><span style=\" font-size:14pt; color:#5500ff;\">\u7f16\u8f91 -&gt; \u65b0\u5efa/\u7f16\u8f91\u8003\u8bd5</span><span style=\" font-size:14pt;\">\u3002</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left"
+                        ":0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">\u795d\u60a8\u5de5\u4f5c\u6109\u5feb\uff01</span></p></body></html>", None))
+        self.button_previous.setText(QCoreApplication.translate("LatexamWindow", u"\u4e0a\u4e00\u9898", None))
+        self.button_next.setText(QCoreApplication.translate("LatexamWindow", u"\u4e0b\u4e00\u9898", None))
         self.button_objective.setText(QCoreApplication.translate("LatexamWindow", u"\u5ba2\u89c2\u9898", None))
         self.button_subjective.setText(QCoreApplication.translate("LatexamWindow", u"\u4e3b\u89c2\u9898", None))
         self.button_confirm.setText(QCoreApplication.translate("LatexamWindow", u"\u786e\u8ba4", None))

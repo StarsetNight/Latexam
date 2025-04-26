@@ -1,16 +1,17 @@
 import os
 import sys
+import ipaddress
+import socket
 from subprocess import run
 
 from PySide6.QtCore import Signal, QObject
 
 from PySide6.QtWidgets import (
-    QApplication,
     QMainWindow,
-    QStyleFactory,
     QMessageBox,
     QTreeWidgetItem,
     QWidget,
+    QFileDialog,
 )
 
 from PySide6.QtGui import QAction
@@ -33,7 +34,7 @@ class LatexamSignal(QObject):
 
 
 class LatexamApplication(QMainWindow):
-    address: tuple[str, int]
+    address: str
     username: str
     number: str
     password: str
@@ -48,8 +49,10 @@ class LatexamApplication(QMainWindow):
         self.setWindowTitle(f"Latexam 考试系统管理面板 {VERSION} - 离线")
         self.ui.output_status.expandAll()
 
+        # 如果log文件夹不存在，则创建
         if not os.path.exists("log/"):
             os.mkdir("log")
+        # 如果papers文件夹不存在，则创建
         if not os.path.exists("papers/"):
             os.mkdir("papers")
 
@@ -99,6 +102,18 @@ class LatexamApplication(QMainWindow):
         else:
             self.ui.input_message.setFocus()
 
+    def onNewPaper(self) -> None:
+        if not (directory := QFileDialog.getExistingDirectory(self, "选择试卷保存路径", "papers/")):
+            return
+        # TODO 新建试卷
+
+
+    def onPrevious(self) -> None:
+        pass
+
+    def onNext(self) -> None:
+        pass
+
     def onSend(self) -> None:
         pass
 
@@ -127,7 +142,42 @@ class LoginApplication(QMainWindow):
         self.parent_window: LatexamApplication = parent
 
     def onLogin(self) -> None:
-        pass
+        # 判断传入IP地址:端口是否合法（IP地址包括IPv4和IPv6形式也包括域名）
+        # address格式：[<IPV6地址>]:<外部端口> <IPV4地址>:<外部端口> <域名>:<外部端口>
+        self.setWindowTitle("Latexam - 正在连接服务器……")
+        if (address := self.ui.input_server.text()) and (password := self.ui.input_password.text()):
+            if address.count(":") > 1:  # IPv6
+                try:
+                    ipaddress.IPv6Address(address[: address.rfind(":")].strip("[]"))
+                except ipaddress.AddressValueError:
+                    QMessageBox.critical(self, "Latexam - 错误", "IPv6地址格式错误！\n"
+                                                                 "正确格式：[<IPV6地址>]:<外部端口>")
+                    self.ui.input_server.setFocus()
+                    self.setWindowTitle("Latexam - 登录管理面板")
+                    return
+            else:  # IPv4
+                try:
+                    ip = socket.gethostbyname(address[: address.rfind(":")])
+                    ipaddress.IPv4Address(ip)
+                except (ipaddress.AddressValueError, socket.gaierror):
+                    QMessageBox.critical(self, "Latexam - 错误", "IPv4地址格式错误！\n"
+                                                                 "正确格式：<IPV4地址>:<外部端口>")
+                    self.ui.input_server.setFocus()
+                    self.setWindowTitle("Latexam - 登录管理面板")
+                    return
+
+            # TODO 密码哈希加密
+
+            self.parent_window.address = address
+            self.parent_window.password = password
+            self.parent_window.onConnect()
+            self.close()
+            self.deleteLater()
+        else:
+            QMessageBox.critical(self, "Latexam - 错误", "服务器地址或密码为空。")
+            self.ui.input_server.setFocus()
+            self.setWindowTitle("Latexam - 登录管理面板")
+            return
 
 
 class AboutApplication(QMainWindow):
