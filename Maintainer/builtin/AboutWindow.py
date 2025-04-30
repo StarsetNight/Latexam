@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'LoginDialog.ui'
+## Form generated from reading UI file 'AboutWindow.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.0
 ##
@@ -15,21 +15,26 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
-    QLabel, QLineEdit, QMainWindow, QPushButton,
-    QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
-import ui.Latexam_rc
+from PySide6.QtWidgets import (QApplication, QFrame, QLabel, QMainWindow,
+    QPushButton, QSizePolicy, QWidget)
+from . import Latexam_rc
 
-class Ui_LoginWindow(object):
-    def setupUi(self, LoginWindow):
-        if not LoginWindow.objectName():
-            LoginWindow.setObjectName(u"LoginWindow")
-        LoginWindow.resize(280, 180)
-        LoginWindow.setMinimumSize(QSize(280, 180))
+class Ui_AboutWindow(object):
+    def setupUi(self, AboutWindow):
+        if not AboutWindow.objectName():
+            AboutWindow.setObjectName(u"AboutWindow")
+        AboutWindow.resize(480, 300)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(AboutWindow.sizePolicy().hasHeightForWidth())
+        AboutWindow.setSizePolicy(sizePolicy)
+        AboutWindow.setMinimumSize(QSize(480, 300))
+        AboutWindow.setMaximumSize(QSize(480, 300))
         icon = QIcon()
         icon.addFile(u":/latexam/Latexam.ico", QSize(), QIcon.Mode.Normal, QIcon.State.On)
-        LoginWindow.setWindowIcon(icon)
-        LoginWindow.setStyleSheet(u"/*\n"
+        AboutWindow.setWindowIcon(icon)
+        AboutWindow.setStyleSheet(u"/*\n"
 "Aqua Style Sheet for QT Applications\n"
 "Author: Jaime A. Quiroga P.\n"
 "Company: GTRONICK\n"
@@ -44,16 +49,21 @@ class Ui_LoginWindow(object):
 "	border-style: solid;\n"
 "	border-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
 "}\n"
+"QTreeWidget {\n"
+"	border-width: 1px;\n"
+"	border-style: solid;\n"
+"	border-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
+"}\n"
 "QPlainTextEdit {\n"
 "	border-width: 1px;\n"
 "	border-style: solid;\n"
 "	border-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
 "}\n"
-"QToolButton {\n"
+"QT"
+                        "oolButton {\n"
 "	border-style: solid;\n"
 "	border-top-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(215, 215, 215), stop:1 rgb(222, 222, 222));\n"
-"	border-right-color: qlineargradient("
-                        "spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(217, 217, 217), stop:1 rgb(227, 227, 227));\n"
+"	border-right-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(217, 217, 217), stop:1 rgb(227, 227, 227));\n"
 "	border-left-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(227, 227, 227), stop:1 rgb(217, 217, 217));\n"
 "	border-bottom-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(215, 215, 215), stop:1 rgb(222, 222, 222));\n"
 "	border-width: 1px;\n"
@@ -65,10 +75,10 @@ class Ui_LoginWindow(object):
 "QToolButton:hover{\n"
 "	border-style: solid;\n"
 "	border-top-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(195, 195, 195), stop:1 rgb(222, 222, 222));\n"
-"	border-right-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(197, 197, 197), stop:1 rgb(227, 227, 227));\n"
+"	border-right-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(197, 197, 197), stop:1 rgb(227,"
+                        " 227, 227));\n"
 "	border-left-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(227, 227, 227), stop:1 rgb(197, 197, 197));\n"
-"	border-bottom-color: qlineargradient(spread:pad, x1:0.5, y1:"
-                        "1, x2:0.5, y2:0, stop:0 rgb(195, 195, 195), stop:1 rgb(222, 222, 222));\n"
+"	border-bottom-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(195, 195, 195), stop:1 rgb(222, 222, 222));\n"
 "	border-width: 1px;\n"
 "	border-radius: 5px;\n"
 "	color: rgb(0,0,0);\n"
@@ -81,7 +91,8 @@ class Ui_LoginWindow(object):
 "	border-right-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(217, 217, 217), stop:1 rgb(227, 227, 227));\n"
 "	border-left-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(227, 227, 227), stop:1 rgb(217, 217, 217));\n"
 "	border-bottom-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(215, 215, 215), stop:1 rgb(222, 222, 222));\n"
-"	border-width: 1px;\n"
+"	bor"
+                        "der-width: 1px;\n"
 "	border-radius: 5px;\n"
 "	color: rgb(0,0,0);\n"
 "	padding: 2px;\n"
@@ -89,8 +100,7 @@ class Ui_LoginWindow(object):
 "}\n"
 "QPushButton{\n"
 "	border-style: solid;\n"
-"	border-top-color: qlineargradient("
-                        "spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(215, 215, 215), stop:1 rgb(222, 222, 222));\n"
+"	border-top-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(215, 215, 215), stop:1 rgb(222, 222, 222));\n"
 "	border-right-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(217, 217, 217), stop:1 rgb(227, 227, 227));\n"
 "	border-left-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(227, 227, 227), stop:1 rgb(217, 217, 217));\n"
 "	border-bottom-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(215, 215, 215), stop:1 rgb(222, 222, 222));\n"
@@ -102,10 +112,10 @@ class Ui_LoginWindow(object):
 "}\n"
 "QPushButton::default{\n"
 "	border-style: solid;\n"
-"	border-top-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(215, 215, 215), stop:1 rgb(222, 222, 222));\n"
+"	border-top-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(215, 215, 215), stop:1 rgb(2"
+                        "22, 222, 222));\n"
 "	border-right-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(217, 217, 217), stop:1 rgb(227, 227, 227));\n"
-"	border-left-color: qlineargradient(spread:pad, x1:0, y1:"
-                        "0.5, x2:1, y2:0.5, stop:0 rgb(227, 227, 227), stop:1 rgb(217, 217, 217));\n"
+"	border-left-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(227, 227, 227), stop:1 rgb(217, 217, 217));\n"
 "	border-bottom-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(215, 215, 215), stop:1 rgb(222, 222, 222));\n"
 "	border-width: 1px;\n"
 "	border-radius: 5px;\n"
@@ -118,12 +128,12 @@ class Ui_LoginWindow(object):
 "	border-top-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(195, 195, 195), stop:1 rgb(222, 222, 222));\n"
 "	border-right-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(197, 197, 197), stop:1 rgb(227, 227, 227));\n"
 "	border-left-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(227, 227, 227), stop:1 rgb(197, 197, 197));\n"
-"	border-bottom-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(195, 195, 195), stop:1 rgb(222, 222, 222));\n"
+"	bor"
+                        "der-bottom-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(195, 195, 195), stop:1 rgb(222, 222, 222));\n"
 "	border-width: 1px;\n"
 "	border-radius: 5px;\n"
 "	color: rgb(0,0,0);\n"
-"	paddin"
-                        "g: 2px;\n"
+"	padding: 2px;\n"
 "	background-color: rgb(255,255,255);\n"
 "}\n"
 "QPushButton:pressed{\n"
@@ -138,11 +148,11 @@ class Ui_LoginWindow(object):
 "	padding: 2px;\n"
 "	background-color: rgb(142,142,142);\n"
 "}\n"
-"QPushButton:disabled{\n"
+"QPushButton:disabled{"
+                        "\n"
 "	border-style: solid;\n"
 "	border-top-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(215, 215, 215), stop:1 rgb(222, 222, 222));\n"
-"	border-right-color: qlineargradient(spread:pad,"
-                        " x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(217, 217, 217), stop:1 rgb(227, 227, 227));\n"
+"	border-right-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(217, 217, 217), stop:1 rgb(227, 227, 227));\n"
 "	border-left-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0.5, stop:0 rgb(227, 227, 227), stop:1 rgb(217, 217, 217));\n"
 "	border-bottom-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgb(215, 215, 215), stop:1 rgb(222, 222, 222));\n"
 "	border-width: 1px;\n"
@@ -160,7 +170,8 @@ class Ui_LoginWindow(object):
 "	color: #000000;\n"
 "}\n"
 "QLCDNumber {\n"
-"	color: rgb(0, 113, 255, 255);\n"
+"	color: rgb(0, 113, 255, 255"
+                        ");\n"
 "}\n"
 "QProgressBar {\n"
 "	text-align: center;\n"
@@ -169,8 +180,7 @@ class Ui_LoginWindow(object):
 "	border-radius: 10px;\n"
 "	border-color: rgb(230, 230, 230);\n"
 "	border-style: solid;\n"
-"	backgro"
-                        "und-color:rgb(207,207,207);\n"
+"	background-color:rgb(207,207,207);\n"
 "}\n"
 "QProgressBar::chunk {\n"
 "	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(49, 147, 250, 255), stop:1 rgba(34, 142, 255, 255));\n"
@@ -187,15 +197,15 @@ class Ui_LoginWindow(object):
 "}\n"
 "\n"
 "QMenuBar::item:selected {\n"
-"  	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
+"  	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 2"
+                        "52, 255));\n"
 "	color: #FFFFFF;\n"
 "}\n"
 "QMenu::item:selected {\n"
 "	border-style: solid;\n"
 "	border-top-color: transparent;\n"
 "	border-right-color: transparent;\n"
-"	border-left-color: qlineargradient(spread:p"
-                        "ad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
+"	border-left-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
 "	border-bottom-color: transparent;\n"
 "	border-left-width: 2px;\n"
 "	color: #000000;\n"
@@ -224,7 +234,8 @@ class Ui_LoginWindow(object):
 "QTabWidget::pane {\n"
 "		border-color: rgb(223,223,223);\n"
 "		background-color:rgb(226,226,226);\n"
-"		border-style: solid;\n"
+""
+                        "		border-style: solid;\n"
 "		border-width: 2px;\n"
 "    	border-radius: 6px;\n"
 "}\n"
@@ -232,8 +243,7 @@ class Ui_LoginWindow(object):
 "	border-style: solid;\n"
 "	border-left-width:1px;\n"
 "	border-right-width:0px;\n"
-"	border-top-wi"
-                        "dth:1px;\n"
+"	border-top-width:1px;\n"
 "	border-bottom-width:1px;\n"
 "	border-top-color: rgb(209,209,209);\n"
 "	border-left-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(209, 209, 209, 209), stop:1 rgba(229, 229, 229, 229));\n"
@@ -249,11 +259,11 @@ class Ui_LoginWindow(object):
 "	border-style: solid;\n"
 "	border-width:1px;\n"
 "	border-top-color: rgb(209,209,209);\n"
-"	border-left-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(209, 209, 209, 209), stop:1 rgba(229, 229, 229, 229));\n"
+"	border-left-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(209, 209, 209, 209), stop:1 rgba(229, 229, 229, 229));"
+                        "\n"
 "	border-right-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(209, 209, 209, 209), stop:1 rgba(229, 229, 229, 229));\n"
 "	border-bottom-color: rgb(229,229,229);\n"
-"	border-top-"
-                        "right-radius: 4px;\n"
+"	border-top-right-radius: 4px;\n"
 "	border-bottom-right-radius: 4px;\n"
 "	color: #000000;\n"
 "	padding: 3px;\n"
@@ -271,14 +281,14 @@ class Ui_LoginWindow(object):
 "	color: #000000;\n"
 "	padding: 3px;\n"
 "	margin-left:0px;\n"
-"	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(247, 247, 247, 255), stop:1 rgba(255, 255, 255, 255));\n"
+"	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(247, 247, 247, 255), stop:1 rg"
+                        "ba(255, 255, 255, 255));\n"
 "}\n"
 "QTabBar::tab:selected, QTabBar::tab:last:selected, QTabBar::tab:hover {\n"
 "  	border-style: solid;\n"
 "  	border-left-width:1px;\n"
 "	border-right-color: transparent;\n"
-"	b"
-                        "order-top-color: rgb(209,209,209);\n"
+"	border-top-color: rgb(209,209,209);\n"
 "	border-left-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(209, 209, 209, 209), stop:1 rgba(229, 229, 229, 229));\n"
 "	border-bottom-color: rgb(229,229,229);\n"
 "	color: #FFFFFF;\n"
@@ -294,13 +304,13 @@ class Ui_LoginWindow(object):
 "  	border-top-width:1px;\n"
 "	border-right-color: transparent;\n"
 "	border-top-color: rgb(209,209,209);\n"
-"	border-left-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(209, 209, 209, 209), stop:1 rgba(229, 229, 229, 229));\n"
+"	border-left-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(209, 20"
+                        "9, 209, 209), stop:1 rgba(229, 229, 229, 229));\n"
 "	border-bottom-color: rgb(229,229,229);\n"
 "	color: #FFFFFF;\n"
 "	padding: 3px;\n"
 "	margin-left:0px;\n"
-"	background-color: qlineargradient(spread:pad, x1:0"
-                        ".5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
+"	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
 "}\n"
 "\n"
 "QCheckBox {\n"
@@ -330,15 +340,15 @@ class Ui_LoginWindow(object):
 "	border-width: 1px;\n"
 "	border-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
 "	color: #000000;\n"
-"	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
+"	background-color: qlineargradient(spread:pad, x1:0.5, y1:1"
+                        ", x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
 "}\n"
 "QCheckBox::indicator:unchecked {\n"
 "\n"
 "	height: 10px;\n"
 "	width: 10px;\n"
 "	border-style:solid;\n"
-"	border-width: "
-                        "1px;\n"
+"	border-width: 1px;\n"
 "	border-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
 "	color: #000000;\n"
 "}\n"
@@ -360,12 +370,12 @@ class Ui_LoginWindow(object):
 "	height: 10px;\n"
 "	width: 10px;\n"
 "	border-style:solid;\n"
-"	border-radius:5px;\n"
+"	border-radius:5px;"
+                        "\n"
 "	border-width: 1px;\n"
 "	border-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
 "	color: #a9b7c6;\n"
-"	background-color: t"
-                        "ransparent;\n"
+"	background-color: transparent;\n"
 "}\n"
 "QStatusBar {\n"
 "	color:#027f7f;\n"
@@ -388,13 +398,13 @@ class Ui_LoginWindow(object):
 "QDateTimeEdit {\n"
 "	border-style: solid;\n"
 "	border-width: 1px;\n"
-"	border-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
+"	border-color: qlineargradient(spread:pad, x"
+                        "1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
 "}\n"
 "QDateEdit {\n"
 "	border-style: solid;\n"
 "	border-width: 1px;\n"
-"	border-color: qlineargradient(spread:pad,"
-                        " x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
+"	border-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(0, 113, 255, 255), stop:1 rgba(91, 171, 252, 255));\n"
 "}\n"
 "\n"
 "QToolBox {\n"
@@ -420,7 +430,8 @@ class Ui_LoginWindow(object):
 "QSlider::groove:vertical {\n"
 "	width: 5px;\n"
 "	background-color: qlineargradient(spread:pad, x1:0.5, y1:1, x2:0.5, y2:0, stop:0 rgba(49, 147, 250, 255), stop:1 rgba(34, 142, 255, 255));\n"
-"}\n"
+"}"
+                        "\n"
 "QSlider::handle:horizontal {\n"
 "	background: rgb(253,253,253);\n"
 "	border-style: solid;\n"
@@ -428,8 +439,7 @@ class Ui_LoginWindow(object):
 "	border-color: rgb(207,207,207);\n"
 "	width: 12px;\n"
 "	margin: -5px 0;\n"
-"	border-ra"
-                        "dius: 7px;\n"
+"	border-radius: 7px;\n"
 "}\n"
 "QSlider::handle:vertical {\n"
 "	background: rgb(253,253,253);\n"
@@ -453,7 +463,8 @@ class Ui_LoginWindow(object):
 "    background-color: qlineargradient(spread:pad, y1:0.5, x1:1, y2:0.5, x2:0, stop:0 rgba(49, 147, 250, 255), stop:1 rgba(34, 142, 255, 255));\n"
 "}\n"
 "QScrollBar:horizontal {\n"
-"	max-height: 20px;\n"
+"	max-height: "
+                        "20px;\n"
 "	border: 1px transparent grey;\n"
 "	margin: 0px 20px 0px 20px;\n"
 "}\n"
@@ -462,8 +473,7 @@ class Ui_LoginWindow(object):
 "	border: 1px transparent grey;\n"
 "	margin: 20px 0px 20px 0px;\n"
 "}\n"
-"QScro"
-                        "llBar::handle:horizontal {\n"
+"QScrollBar::handle:horizontal {\n"
 "	background: rgb(253,253,253);\n"
 "	border-style: solid;\n"
 "	border-width: 1px;\n"
@@ -492,15 +502,15 @@ class Ui_LoginWindow(object):
 "	border-style: solid;\n"
 "	border-width: 1px;\n"
 "	border-color: rgb(147, 200, 200);\n"
-"	border-radius: 7px;\n"
+"	border-radius: 7"
+                        "px;\n"
 "	min-height: 25px;\n"
 "}\n"
 "QScrollBar::add-line:horizontal {\n"
 "   border: 2px transparent grey;\n"
 "   border-top-right-radius: 7px;\n"
 "   border-bottom-right-radius: 7px;\n"
-"   background: rgba("
-                        "34, 142, 255, 255);\n"
+"   background: rgba(34, 142, 255, 255);\n"
 "   width: 20px;\n"
 "   subcontrol-position: right;\n"
 "   subcontrol-origin: margin;\n"
@@ -525,15 +535,15 @@ class Ui_LoginWindow(object):
 "}\n"
 "QScrollBar::add-line:vertical:pressed {\n"
 "   border: 2px transparent grey;\n"
-"   border-bottom-left-radius: 7px;\n"
+"   border-bottom-left-radius: 7"
+                        "px;\n"
 "   border-bottom-right-radius: 7px;\n"
 "   background: rgb(181,181,181);\n"
 "   height: 20px;\n"
 "   subcontrol-position: bottom;\n"
 "   subcontrol-origin: margin;\n"
 "}\n"
-"QScrollBar::sub-line:horizo"
-                        "ntal {\n"
+"QScrollBar::sub-line:horizontal {\n"
 "   border: 2px transparent grey;\n"
 "   border-top-left-radius: 7px;\n"
 "   border-bottom-left-radius: 7px;\n"
@@ -558,15 +568,15 @@ class Ui_LoginWindow(object):
 "   background: rgba(34, 142, 255, 255);\n"
 "   height: 20px;\n"
 "   subcontrol-position: top;\n"
-"   subcontrol-origin: margin;\n"
+"   subcontrol-origin: "
+                        "margin;\n"
 "}\n"
 "QScrollBar::sub-line:vertical:pressed {\n"
 "   border: 2px transparent grey;\n"
 "   border-top-left-radius: 7px;\n"
 "   border-top-right-radius: 7px;\n"
 "   background: rgb(181,181,181);\n"
-""
-                        "   height: 20px;\n"
+"   height: 20px;\n"
 "   subcontrol-position: top;\n"
 "   subcontrol-origin: margin;\n"
 "}\n"
@@ -595,122 +605,63 @@ class Ui_LoginWindow(object):
 "   background: white;\n"
 "}\n"
 "QScrollBar::down-arrow:vertical {\n"
-"   border: 1px transparent grey;\n"
+"   border: 1px tra"
+                        "nsparent grey;\n"
 "   border-bottom-left-radius: 3px;\n"
 "   border-bottom-right-radius: 3px;\n"
 "   width: 6px;\n"
 "   height: 6px;\n"
 "   background: white;\n"
 "}\n"
-"QScrollBar::add-page:horizontal, QScroll"
-                        "Bar::sub-page:horizontal {\n"
+"QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {\n"
 "   background: none;\n"
 "}\n"
 "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {\n"
 "   background: none;\n"
 "}")
-        self.centralwidget = QWidget(LoginWindow)
+        self.centralwidget = QWidget(AboutWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.verticalLayout_2 = QVBoxLayout(self.centralwidget)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout = QVBoxLayout()
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.label_login = QLabel(self.centralwidget)
-        self.label_login.setObjectName(u"label_login")
+        self.text_logo = QLabel(self.centralwidget)
+        self.text_logo.setObjectName(u"text_logo")
+        self.text_logo.setGeometry(QRect(20, 20, 141, 141))
+        self.text_logo.setPixmap(QPixmap(u":/latexam/Latexam.png"))
+        self.text_logo.setScaledContents(True)
+        self.text_logo.setAlignment(Qt.AlignCenter)
+        self.text_title = QLabel(self.centralwidget)
+        self.text_title.setObjectName(u"text_title")
+        self.text_title.setGeometry(QRect(180, 40, 151, 31))
+        font = QFont()
+        font.setPointSize(28)
+        font.setBold(False)
+        self.text_title.setFont(font)
+        self.line = QFrame(self.centralwidget)
+        self.line.setObjectName(u"line")
+        self.line.setGeometry(QRect(180, 90, 281, 16))
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
+        self.text_content = QLabel(self.centralwidget)
+        self.text_content.setObjectName(u"text_content")
+        self.text_content.setGeometry(QRect(180, 110, 271, 101))
+        self.text_version = QLabel(self.centralwidget)
+        self.text_version.setObjectName(u"text_version")
+        self.text_version.setGeometry(QRect(340, 50, 121, 20))
+        self.button_ok = QPushButton(self.centralwidget)
+        self.button_ok.setObjectName(u"button_ok")
+        self.button_ok.setGeometry(QRect(390, 260, 75, 24))
+        AboutWindow.setCentralWidget(self.centralwidget)
 
-        self.verticalLayout.addWidget(self.label_login)
+        self.retranslateUi(AboutWindow)
+        self.button_ok.clicked.connect(AboutWindow.close)
+        self.button_ok.clicked.connect(AboutWindow.deleteLater)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.verticalLayout.addItem(self.verticalSpacer)
-
-        self.gridLayout = QGridLayout()
-        self.gridLayout.setObjectName(u"gridLayout")
-        self.input_password = QLineEdit(self.centralwidget)
-        self.input_password.setObjectName(u"input_password")
-        self.input_password.setMinimumSize(QSize(0, 25))
-        self.input_password.setEchoMode(QLineEdit.Password)
-
-        self.gridLayout.addWidget(self.input_password, 1, 1, 1, 1)
-
-        self.label_server = QLabel(self.centralwidget)
-        self.label_server.setObjectName(u"label_server")
-
-        self.gridLayout.addWidget(self.label_server, 0, 0, 1, 1)
-
-        self.label_password = QLabel(self.centralwidget)
-        self.label_password.setObjectName(u"label_password")
-
-        self.gridLayout.addWidget(self.label_password, 1, 0, 1, 1, Qt.AlignHCenter)
-
-        self.input_server = QLineEdit(self.centralwidget)
-        self.input_server.setObjectName(u"input_server")
-        self.input_server.setMinimumSize(QSize(0, 25))
-
-        self.gridLayout.addWidget(self.input_server, 0, 1, 1, 1)
-
-
-        self.verticalLayout.addLayout(self.gridLayout)
-
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
-
-        self.verticalLayout.addItem(self.verticalSpacer_2)
-
-        self.line_2 = QFrame(self.centralwidget)
-        self.line_2.setObjectName(u"line_2")
-        self.line_2.setFrameShape(QFrame.Shape.HLine)
-        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
-
-        self.verticalLayout.addWidget(self.line_2)
-
-        self.label_status = QLabel(self.centralwidget)
-        self.label_status.setObjectName(u"label_status")
-
-        self.verticalLayout.addWidget(self.label_status)
-
-        self.DialogButtonArea = QHBoxLayout()
-        self.DialogButtonArea.setObjectName(u"DialogButtonArea")
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.DialogButtonArea.addItem(self.horizontalSpacer)
-
-        self.key_login = QPushButton(self.centralwidget)
-        self.key_login.setObjectName(u"key_login")
-        self.key_login.setMinimumSize(QSize(60, 25))
-
-        self.DialogButtonArea.addWidget(self.key_login)
-
-        self.key_cancel = QPushButton(self.centralwidget)
-        self.key_cancel.setObjectName(u"key_cancel")
-        self.key_cancel.setMinimumSize(QSize(60, 25))
-
-        self.DialogButtonArea.addWidget(self.key_cancel)
-
-
-        self.verticalLayout.addLayout(self.DialogButtonArea)
-
-
-        self.verticalLayout_2.addLayout(self.verticalLayout)
-
-        LoginWindow.setCentralWidget(self.centralwidget)
-        QWidget.setTabOrder(self.input_server, self.key_login)
-        QWidget.setTabOrder(self.key_login, self.key_cancel)
-
-        self.retranslateUi(LoginWindow)
-        self.key_login.clicked.connect(LoginWindow.onLogin)
-        self.key_cancel.clicked.connect(LoginWindow.close)
-        self.key_cancel.clicked.connect(LoginWindow.deleteLater)
-
-        QMetaObject.connectSlotsByName(LoginWindow)
+        QMetaObject.connectSlotsByName(AboutWindow)
     # setupUi
 
-    def retranslateUi(self, LoginWindow):
-        LoginWindow.setWindowTitle(QCoreApplication.translate("LoginWindow", u"Latexam - \u767b\u5f55\u7ba1\u7406\u9762\u677f", None))
-        self.label_login.setText(QCoreApplication.translate("LoginWindow", u"\u767b\u5f55\u5230Latexam\u8003\u8bd5\u670d\u52a1\u5668\u7ba1\u7406\u540e\u53f0", None))
-        self.label_server.setText(QCoreApplication.translate("LoginWindow", u"\u670d\u52a1\u5668\u4e3b\u673a", None))
-        self.label_password.setText(QCoreApplication.translate("LoginWindow", u"\u7ba1\u7406\u5458\u5bc6\u7801", None))
-        self.label_status.setText(QCoreApplication.translate("LoginWindow", u"\u6843\u674e\u6ee1\u56ed\u7ade\u82b3\u83f2\uff0c\u540d\u5e08\u5341\u8f7d\u94f8\u680b\u6881\u3002", None))
-        self.key_login.setText(QCoreApplication.translate("LoginWindow", u"\u767b\u5f55", None))
-        self.key_cancel.setText(QCoreApplication.translate("LoginWindow", u"\u53d6\u6d88", None))
+    def retranslateUi(self, AboutWindow):
+        AboutWindow.setWindowTitle(QCoreApplication.translate("AboutWindow", u"\u5173\u4e8e Latexam", None))
+        self.text_title.setText(QCoreApplication.translate("AboutWindow", u"Latexam", None))
+        self.text_content.setText(QCoreApplication.translate("AboutWindow", u"<html><head/><body><p>\u672c\u8f6f\u4ef6\u4e3aLatexam\u8003\u8bd5\u7cfb\u7edf\u670d\u52a1\u5668\u63a7\u5236\u7aef\u3002</p><p>\u201c\u661f\u5149\u4e8e\u5fc3\uff0c\u661f\u843d\u4e8e\u884c\u3002\u201d<br/>\u611f\u8c22\u4f60\u4f7f\u7528\u672c\u8f6f\u4ef6\uff01</p><p>\u672c\u8f6f\u4ef6\u4e13\u7528\u4e8e\u8ba1\u7b97\u673a\u7a0b\u5e8f\u8bbe\u8ba1\u8d5b\u4e8b\u4f5c\u54c1\uff0c<br/>\u8bf7\u52ff\u7528\u4f5c\u5176\u4ed6\u7528\u9014\uff01</p></body></html>", None))
+        self.text_version.setText(QCoreApplication.translate("AboutWindow", u"\u7248\u672c", None))
+        self.button_ok.setText(QCoreApplication.translate("AboutWindow", u"\u786e\u5b9a", None))
     # retranslateUi
 

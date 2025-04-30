@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QApplication, QStyleFactory
 import sys
-from ui.InitWindow import LatexamApplication
+from builtin.InitWindow import LatexamApplication
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)  # 启动一个应用

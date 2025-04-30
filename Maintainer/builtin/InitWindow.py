@@ -21,10 +21,7 @@ from .AboutWindow import Ui_AboutWindow
 from .LatexamWindow import Ui_LatexamWindow
 from .LoginDialog import Ui_LoginWindow
 
-from models.BaseModel import *
-from models.ExamData import *
-from models.ProtoModels import *
-
+from Maintainer.builtin.models import *
 
 VERSION = "v1.0.0 Alpha"
 
@@ -93,7 +90,7 @@ class LatexamApplication(QMainWindow):
                 child_window = AboutApplication()
                 child_window.show()
             case "帮助":
-                run("hh.exe Latexam.chm", shell=True)
+                run("hh.exe LatexamMaintainer.chm", shell=True)
 
     def onConnect(self) -> bool:
         """

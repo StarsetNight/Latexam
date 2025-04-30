@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QHeaderView,
     QMainWindow, QMenu, QMenuBar, QPlainTextEdit,
     QPushButton, QSizePolicy, QSpacerItem, QTextBrowser,
     QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
-import ui.Latexam_rc
+from . import Latexam_rc
 
 class Ui_LatexamWindow(object):
     def setupUi(self, LatexamWindow):
