@@ -720,6 +720,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
              </spacer>
             </item>
             <item>
+             <widget class="QLabel" name="text_status">
+              <property name="text">
+               <string>状态正常</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="button_previous">
               <property name="enabled">
                <bool>false</bool>
@@ -804,28 +811,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
               </property>
               <property name="text">
                <string>主观题</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="button_confirm">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>60</width>
-                <height>25</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>60</width>
-                <height>25</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>确认</string>
               </property>
              </widget>
             </item>
@@ -920,7 +905,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </property>
     <addaction name="action_newpaper"/>
     <addaction name="action_editpaper"/>
+    <addaction name="action_savepaper"/>
     <addaction name="action_fileexam"/>
+    <addaction name="action_judgement"/>
    </widget>
    <addaction name="menu_session"/>
    <addaction name="menu_edit"/>
@@ -971,6 +958,16 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <string>新建/编辑考试</string>
    </property>
   </action>
+  <action name="action_savepaper">
+   <property name="text">
+    <string>保存试卷</string>
+   </property>
+  </action>
+  <action name="action_judgement">
+   <property name="text">
+    <string>批改考试试卷</string>
+   </property>
+  </action>
  </widget>
  <tabstops>
   <tabstop>output_status</tabstop>
@@ -978,7 +975,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <tabstop>input_message</tabstop>
   <tabstop>button_objective</tabstop>
   <tabstop>button_subjective</tabstop>
-  <tabstop>button_confirm</tabstop>
   <tabstop>button_abort</tabstop>
   <tabstop>button_send</tabstop>
  </tabstops>
@@ -1046,22 +1042,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </hint>
     <hint type="destinationlabel">
      <x>684</x>
-     <y>459</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button_confirm</sender>
-   <signal>clicked()</signal>
-   <receiver>LatexamWindow</receiver>
-   <slot>onConfirm()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>608</x>
-     <y>473</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>615</x>
      <y>459</y>
     </hint>
    </hints>

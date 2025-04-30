@@ -17,9 +17,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QHeaderView,
-    QMainWindow, QMenu, QMenuBar, QPlainTextEdit,
-    QPushButton, QSizePolicy, QSpacerItem, QTextBrowser,
-    QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
+    QLabel, QMainWindow, QMenu, QMenuBar,
+    QPlainTextEdit, QPushButton, QSizePolicy, QSpacerItem,
+    QTextBrowser, QTreeWidget, QTreeWidgetItem, QVBoxLayout,
+    QWidget)
 from . import Latexam_rc
 
 class Ui_LatexamWindow(object):
@@ -634,6 +635,10 @@ class Ui_LatexamWindow(object):
         self.action_editpaper.setObjectName(u"action_editpaper")
         self.action_fileexam = QAction(LatexamWindow)
         self.action_fileexam.setObjectName(u"action_fileexam")
+        self.action_savepaper = QAction(LatexamWindow)
+        self.action_savepaper.setObjectName(u"action_savepaper")
+        self.action_judgement = QAction(LatexamWindow)
+        self.action_judgement.setObjectName(u"action_judgement")
         self.centralwidget = QWidget(LatexamWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout_3 = QHBoxLayout(self.centralwidget)
@@ -699,6 +704,11 @@ class Ui_LatexamWindow(object):
 
         self.horizontalLayout.addItem(self.horizontalSpacer)
 
+        self.text_status = QLabel(self.centralwidget)
+        self.text_status.setObjectName(u"text_status")
+
+        self.horizontalLayout.addWidget(self.text_status)
+
         self.button_previous = QPushButton(self.centralwidget)
         self.button_previous.setObjectName(u"button_previous")
         self.button_previous.setEnabled(False)
@@ -730,14 +740,6 @@ class Ui_LatexamWindow(object):
         self.button_subjective.setMaximumSize(QSize(60, 25))
 
         self.horizontalLayout.addWidget(self.button_subjective)
-
-        self.button_confirm = QPushButton(self.centralwidget)
-        self.button_confirm.setObjectName(u"button_confirm")
-        self.button_confirm.setEnabled(False)
-        self.button_confirm.setMinimumSize(QSize(60, 25))
-        self.button_confirm.setMaximumSize(QSize(60, 25))
-
-        self.horizontalLayout.addWidget(self.button_confirm)
 
         self.button_abort = QPushButton(self.centralwidget)
         self.button_abort.setObjectName(u"button_abort")
@@ -787,8 +789,7 @@ class Ui_LatexamWindow(object):
         QWidget.setTabOrder(self.output_message, self.input_message)
         QWidget.setTabOrder(self.input_message, self.button_objective)
         QWidget.setTabOrder(self.button_objective, self.button_subjective)
-        QWidget.setTabOrder(self.button_subjective, self.button_confirm)
-        QWidget.setTabOrder(self.button_confirm, self.button_abort)
+        QWidget.setTabOrder(self.button_subjective, self.button_abort)
         QWidget.setTabOrder(self.button_abort, self.button_send)
 
         self.menubar.addAction(self.menu_session.menuAction())
@@ -802,14 +803,15 @@ class Ui_LatexamWindow(object):
         self.menu_about.addAction(self.action)
         self.menu_edit.addAction(self.action_newpaper)
         self.menu_edit.addAction(self.action_editpaper)
+        self.menu_edit.addAction(self.action_savepaper)
         self.menu_edit.addAction(self.action_fileexam)
+        self.menu_edit.addAction(self.action_judgement)
 
         self.retranslateUi(LatexamWindow)
         self.menubar.triggered.connect(LatexamWindow.triggeredMenubar)
         self.button_send.clicked.connect(LatexamWindow.onSend)
         self.output_status.itemPressed.connect(LatexamWindow.onStatusClicked)
         self.button_abort.clicked.connect(LatexamWindow.onAbort)
-        self.button_confirm.clicked.connect(LatexamWindow.onConfirm)
         self.button_subjective.clicked.connect(LatexamWindow.onSubjective)
         self.button_objective.clicked.connect(LatexamWindow.onObjective)
         self.button_next.clicked.connect(LatexamWindow.onNext)
@@ -829,6 +831,8 @@ class Ui_LatexamWindow(object):
         self.action_newpaper.setText(QCoreApplication.translate("LatexamWindow", u"\u65b0\u5efa\u8bd5\u5377", None))
         self.action_editpaper.setText(QCoreApplication.translate("LatexamWindow", u"\u7f16\u8f91\u8bd5\u5377", None))
         self.action_fileexam.setText(QCoreApplication.translate("LatexamWindow", u"\u65b0\u5efa/\u7f16\u8f91\u8003\u8bd5", None))
+        self.action_savepaper.setText(QCoreApplication.translate("LatexamWindow", u"\u4fdd\u5b58\u8bd5\u5377", None))
+        self.action_judgement.setText(QCoreApplication.translate("LatexamWindow", u"\u6279\u6539\u8003\u8bd5\u8bd5\u5377", None))
 
         __sortingEnabled = self.output_status.isSortingEnabled()
         self.output_status.setSortingEnabled(False)
@@ -859,11 +863,11 @@ class Ui_LatexamWindow(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt;\"><br /></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left"
                         ":0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">\u795d\u60a8\u5de5\u4f5c\u6109\u5feb\uff01</span></p></body></html>", None))
+        self.text_status.setText(QCoreApplication.translate("LatexamWindow", u"\u72b6\u6001\u6b63\u5e38", None))
         self.button_previous.setText(QCoreApplication.translate("LatexamWindow", u"\u4e0a\u4e00\u9898", None))
         self.button_next.setText(QCoreApplication.translate("LatexamWindow", u"\u4e0b\u4e00\u9898", None))
         self.button_objective.setText(QCoreApplication.translate("LatexamWindow", u"\u5ba2\u89c2\u9898", None))
         self.button_subjective.setText(QCoreApplication.translate("LatexamWindow", u"\u4e3b\u89c2\u9898", None))
-        self.button_confirm.setText(QCoreApplication.translate("LatexamWindow", u"\u786e\u8ba4", None))
         self.button_abort.setText(QCoreApplication.translate("LatexamWindow", u"\u653e\u5f03", None))
         self.button_send.setText(QCoreApplication.translate("LatexamWindow", u"\u53d1\u9001", None))
 #if QT_CONFIG(shortcut)
