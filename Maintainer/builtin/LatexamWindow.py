@@ -741,13 +741,13 @@ class Ui_LatexamWindow(object):
 
         self.horizontalLayout.addWidget(self.button_subjective)
 
-        self.button_abort = QPushButton(self.centralwidget)
-        self.button_abort.setObjectName(u"button_abort")
-        self.button_abort.setEnabled(False)
-        self.button_abort.setMinimumSize(QSize(60, 25))
-        self.button_abort.setMaximumSize(QSize(60, 25))
+        self.button_edit = QPushButton(self.centralwidget)
+        self.button_edit.setObjectName(u"button_edit")
+        self.button_edit.setEnabled(False)
+        self.button_edit.setMinimumSize(QSize(60, 25))
+        self.button_edit.setMaximumSize(QSize(60, 25))
 
-        self.horizontalLayout.addWidget(self.button_abort)
+        self.horizontalLayout.addWidget(self.button_edit)
 
         self.button_send = QPushButton(self.centralwidget)
         self.button_send.setObjectName(u"button_send")
@@ -789,8 +789,8 @@ class Ui_LatexamWindow(object):
         QWidget.setTabOrder(self.output_message, self.input_message)
         QWidget.setTabOrder(self.input_message, self.button_objective)
         QWidget.setTabOrder(self.button_objective, self.button_subjective)
-        QWidget.setTabOrder(self.button_subjective, self.button_abort)
-        QWidget.setTabOrder(self.button_abort, self.button_send)
+        QWidget.setTabOrder(self.button_subjective, self.button_edit)
+        QWidget.setTabOrder(self.button_edit, self.button_send)
 
         self.menubar.addAction(self.menu_session.menuAction())
         self.menubar.addAction(self.menu_edit.menuAction())
@@ -811,11 +811,11 @@ class Ui_LatexamWindow(object):
         self.menubar.triggered.connect(LatexamWindow.triggeredMenubar)
         self.button_send.clicked.connect(LatexamWindow.onSend)
         self.output_status.itemPressed.connect(LatexamWindow.onStatusClicked)
-        self.button_abort.clicked.connect(LatexamWindow.onAbort)
         self.button_subjective.clicked.connect(LatexamWindow.onSubjective)
         self.button_objective.clicked.connect(LatexamWindow.onObjective)
         self.button_next.clicked.connect(LatexamWindow.onNext)
         self.button_previous.clicked.connect(LatexamWindow.onPrevious)
+        self.button_edit.clicked.connect(LatexamWindow.onEdit)
 
         QMetaObject.connectSlotsByName(LatexamWindow)
     # setupUi
@@ -868,7 +868,7 @@ class Ui_LatexamWindow(object):
         self.button_next.setText(QCoreApplication.translate("LatexamWindow", u"\u4e0b\u4e00\u9898", None))
         self.button_objective.setText(QCoreApplication.translate("LatexamWindow", u"\u5ba2\u89c2\u9898", None))
         self.button_subjective.setText(QCoreApplication.translate("LatexamWindow", u"\u4e3b\u89c2\u9898", None))
-        self.button_abort.setText(QCoreApplication.translate("LatexamWindow", u"\u653e\u5f03", None))
+        self.button_edit.setText(QCoreApplication.translate("LatexamWindow", u"\u7f16\u8f91", None))
         self.button_send.setText(QCoreApplication.translate("LatexamWindow", u"\u53d1\u9001", None))
 #if QT_CONFIG(shortcut)
         self.button_send.setShortcut(QCoreApplication.translate("LatexamWindow", u"Ctrl+Return", None))
