@@ -2,25 +2,25 @@ from datetime import datetime
 from .BaseModel import BaseModel
 
 
-class Question(BaseModel):
-    title: str
-    type: str
-    score: int
-
-
 class Option(BaseModel):
     correct: bool
     text: str
 
 
+class Question(BaseModel):
+    title: str
+    type: str
+    score: int
+    options: list[Option]
+    judgement_reference: str
+
+
 class ObjectiveQuestion(Question):
     type: str = "objective"
-    options: list[Option]
 
 
 class SubjectiveQuestion(Question):
     type: str = "subjective"
-    judgement_reference: str
 
 
 class Paper(BaseModel):

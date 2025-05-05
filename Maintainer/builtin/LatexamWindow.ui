@@ -815,7 +815,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="button_abort">
+             <widget class="QPushButton" name="button_edit">
               <property name="enabled">
                <bool>false</bool>
               </property>
@@ -832,7 +832,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                </size>
               </property>
               <property name="text">
-               <string>放弃</string>
+               <string>编辑</string>
               </property>
              </widget>
             </item>
@@ -975,7 +975,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <tabstop>input_message</tabstop>
   <tabstop>button_objective</tabstop>
   <tabstop>button_subjective</tabstop>
-  <tabstop>button_abort</tabstop>
+  <tabstop>button_edit</tabstop>
   <tabstop>button_send</tabstop>
  </tabstops>
  <resources>
@@ -1031,30 +1031,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
    </hints>
   </connection>
   <connection>
-   <sender>button_abort</sender>
-   <signal>clicked()</signal>
-   <receiver>LatexamWindow</receiver>
-   <slot>onAbort()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>683</x>
-     <y>472</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>684</x>
-     <y>459</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>button_subjective</sender>
    <signal>clicked()</signal>
    <receiver>LatexamWindow</receiver>
    <slot>onSubjective()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>554</x>
-     <y>477</y>
+     <x>646</x>
+     <y>486</y>
     </hint>
     <hint type="destinationlabel">
      <x>553</x>
@@ -1069,8 +1053,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <slot>onObjective()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>486</x>
-     <y>473</y>
+     <x>580</x>
+     <y>486</y>
     </hint>
     <hint type="destinationlabel">
      <x>446</x>
@@ -1085,8 +1069,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <slot>onNext()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>420</x>
-     <y>480</y>
+     <x>514</x>
+     <y>486</y>
     </hint>
     <hint type="destinationlabel">
      <x>419</x>
@@ -1101,8 +1085,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <slot>onPrevious()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>355</x>
-     <y>474</y>
+     <x>448</x>
+     <y>486</y>
     </hint>
     <hint type="destinationlabel">
      <x>353</x>
@@ -1110,11 +1094,27 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>button_edit</sender>
+   <signal>clicked()</signal>
+   <receiver>LatexamWindow</receiver>
+   <slot>onEdit()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>685</x>
+     <y>476</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>686</x>
+     <y>457</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>triggeredMenubar(QAction*)</slot>
   <slot>onSend()</slot>
-  <slot>onAbort()</slot>
+  <slot>onEdit()</slot>
   <slot>onConfirm()</slot>
   <slot>onStatusClicked(QTreeWidgetItem*)</slot>
   <slot>onSubjective()</slot>
