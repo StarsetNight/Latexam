@@ -791,7 +791,6 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
      <string>关于</string>
     </property>
     <addaction name="action_about"/>
-    <addaction name="action"/>
    </widget>
    <addaction name="menu_session"/>
    <addaction name="menu_about"/>
@@ -853,54 +852,6 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
    </hints>
   </connection>
   <connection>
-   <sender>button_answer</sender>
-   <signal>clicked()</signal>
-   <receiver>LatexamWindow</receiver>
-   <slot>sendMessage()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>747</x>
-     <y>470</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>747</x>
-     <y>439</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button_next</sender>
-   <signal>clicked()</signal>
-   <receiver>LatexamWindow</receiver>
-   <slot>onManage()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>683</x>
-     <y>473</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>682</x>
-     <y>461</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button_previous</sender>
-   <signal>clicked()</signal>
-   <receiver>LatexamWindow</receiver>
-   <slot>onTool()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>616</x>
-     <y>472</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>600</x>
-     <y>457</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>output_status</sender>
    <signal>itemPressed(QTreeWidgetItem*,int)</signal>
    <receiver>LatexamWindow</receiver>
@@ -916,12 +867,60 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>button_previous</sender>
+   <signal>clicked()</signal>
+   <receiver>LatexamWindow</receiver>
+   <slot>onPrevious()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>617</x>
+     <y>476</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>619</x>
+     <y>491</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_next</sender>
+   <signal>clicked()</signal>
+   <receiver>LatexamWindow</receiver>
+   <slot>onNext()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>683</x>
+     <y>476</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>700</x>
+     <y>492</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>button_answer</sender>
+   <signal>clicked()</signal>
+   <receiver>LatexamWindow</receiver>
+   <slot>onAnswer()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>747</x>
+     <y>474</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>769</x>
+     <y>489</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>triggeredMenubar(QAction*)</slot>
-  <slot>sendMessage()</slot>
-  <slot>onManage()</slot>
-  <slot>onTool()</slot>
   <slot>onStatusClicked(QTreeWidgetItem*)</slot>
+  <slot>onPrevious()</slot>
+  <slot>onNext()</slot>
+  <slot>onAnswer()</slot>
  </slots>
 </ui>

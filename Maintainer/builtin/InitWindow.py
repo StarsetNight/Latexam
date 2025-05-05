@@ -1,8 +1,9 @@
 import os
-import sys
 import ipaddress
 import socket
 import json
+import hashlib
+import requests
 from subprocess import run
 
 from PySide6.QtCore import Signal, QObject
@@ -39,9 +40,9 @@ class LatexamApplication(QMainWindow):
     child_window: QWidget
 
     address: str = ""
-    username: str = ""
-    number: str = ""
     password: str = ""
+    online: bool = False
+
     paper: Paper
     paper_path: str = ""
     exam: Exam
@@ -114,16 +115,25 @@ class LatexamApplication(QMainWindow):
         执行登录操作，返回是否成功
         :return: 成功返回True，否则返回False
         """
-        pass
-        # TODO 通讯
+        response: LoginResults = LoginResults.parse_raw(
+            requests.post(f"http://{self.address}/api/v1/login", json={"password": self.password}).content
+        )
+        if response.success:
+            self.setWindowTitle(f"Latexam 考试系统管理面板 {VERSION} - 在线")
 
     def onDisconnect(self) -> None:
         """
         执行断开操作
         :return: 无
         """
-        pass
-        # TODO 通讯
+        dialog = QMessageBox.warning(self, "Latexam - 警告", "你真的要断开与Latexam服务器的连接吗？\n"
+                                                             "所有未保存更改都会消失！",
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if dialog == QMessageBox.Yes:
+            self.setWindowTitle(f"Latexam 考试系统管理面板 {VERSION} - 离线")
+            self.online = False
+            self.address = ""
+            self.password = ""
 
     def onExit(self) -> None:
         self.close()
@@ -247,7 +257,8 @@ class LatexamApplication(QMainWindow):
             self.question = SubjectiveQuestion(**self.paper.questions[self.index].dict())
             self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.question.score}分）</p>"
                                             f"<p>{self.question.title}</p>")
-            self.signal.append_output_box.emit(f"<p><font color='grey'>判题标准：{self.question.judgement_reference}</font></p>")
+            self.signal.append_output_box.emit(f"<p><font color='grey'>判题标准："
+                                               f"{self.question.judgement_reference}</font></p>")
 
     def onSend(self) -> None:
         # 如果是修改题目
@@ -258,9 +269,13 @@ class LatexamApplication(QMainWindow):
                     self.ui.text_status.setText("编辑选项1")
                     self.option_index = 0
                     if self.paper.questions[self.index].options[self.option_index].correct:
-                        self.ui.input_message.setPlainText(self.paper.questions[self.index].options[self.option_index].text + "~")
+                        self.ui.input_message.setPlainText(
+                            self.paper.questions[self.index].options[self.option_index].text + "~"
+                        )
                     else:
-                        self.ui.input_message.setPlainText(self.paper.questions[self.index].options[self.option_index].text)
+                        self.ui.input_message.setPlainText(
+                            self.paper.questions[self.index].options[self.option_index].text
+                        )
                 elif self.ui.text_status.text().startswith("编辑选项"):
                     if self.option_index != len(self.paper.questions[self.index].options) - 1:
                         option = self.ui.input_message.toPlainText()
@@ -272,9 +287,13 @@ class LatexamApplication(QMainWindow):
                         self.option_index += 1
                         self.ui.text_status.setText(f"编辑选项{self.option_index + 1}")
                         if self.paper.questions[self.index].options[self.option_index].correct:
-                            self.ui.input_message.setPlainText(self.paper.questions[self.index].options[self.option_index].text + "~")
+                            self.ui.input_message.setPlainText(
+                                self.paper.questions[self.index].options[self.option_index].text + "~"
+                            )
                         else:
-                            self.ui.input_message.setPlainText(self.paper.questions[self.index].options[self.option_index].text)
+                            self.ui.input_message.setPlainText(
+                                self.paper.questions[self.index].options[self.option_index].text
+                            )
                     else:
                         option = self.ui.input_message.toPlainText()
                         if option.endswith("~"):
@@ -380,7 +399,7 @@ class LoginApplication(QMainWindow):
                     self.setWindowTitle("Latexam - 登录管理面板")
                     return
 
-            # TODO 密码哈希加密
+            password = hashlib.sha256(password.encode()).hexdigest()
 
             self.parent_window.address = address
             self.parent_window.password = password

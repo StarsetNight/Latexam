@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'AboutWindow.ui'
+## Form generated from reading UI file 'LatexamWindow.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.0
 ##
@@ -11,30 +11,27 @@
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QFrame, QLabel, QMainWindow,
-    QPushButton, QSizePolicy, QWidget)
-import Latexam_rc
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QHeaderView,
+    QMainWindow, QMenu, QMenuBar, QPlainTextEdit,
+    QPushButton, QSizePolicy, QSpacerItem, QTextBrowser,
+    QTreeWidget, QTreeWidgetItem, QVBoxLayout, QWidget)
+from . import Latexam_rc
 
-class Ui_AboutWindow(object):
-    def setupUi(self, AboutWindow):
-        if not AboutWindow.objectName():
-            AboutWindow.setObjectName(u"AboutWindow")
-        AboutWindow.resize(480, 300)
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(AboutWindow.sizePolicy().hasHeightForWidth())
-        AboutWindow.setSizePolicy(sizePolicy)
-        AboutWindow.setMinimumSize(QSize(480, 300))
-        AboutWindow.setMaximumSize(QSize(480, 300))
+class Ui_LatexamWindow(object):
+    def setupUi(self, LatexamWindow):
+        if not LatexamWindow.objectName():
+            LatexamWindow.setObjectName(u"LatexamWindow")
+        LatexamWindow.resize(800, 500)
+        LatexamWindow.setMinimumSize(QSize(800, 500))
         icon = QIcon()
         icon.addFile(u":/latexam/Latexam.ico", QSize(), QIcon.Mode.Normal, QIcon.State.On)
-        AboutWindow.setWindowIcon(icon)
-        AboutWindow.setStyleSheet(u"/*\n"
+        LatexamWindow.setWindowIcon(icon)
+        LatexamWindow.setStyleSheet(u"/*\n"
 "Aqua Style Sheet for QT Applications\n"
 "Author: Jaime A. Quiroga P.\n"
 "Company: GTRONICK\n"
@@ -619,49 +616,175 @@ class Ui_AboutWindow(object):
 "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {\n"
 "   background: none;\n"
 "}")
-        self.centralwidget = QWidget(AboutWindow)
+        self.action_login = QAction(LatexamWindow)
+        self.action_login.setObjectName(u"action_login")
+        self.action_sessionmgr = QAction(LatexamWindow)
+        self.action_sessionmgr.setObjectName(u"action_sessionmgr")
+        self.action_disconnect = QAction(LatexamWindow)
+        self.action_disconnect.setObjectName(u"action_disconnect")
+        self.action_exit = QAction(LatexamWindow)
+        self.action_exit.setObjectName(u"action_exit")
+        self.action_about = QAction(LatexamWindow)
+        self.action_about.setObjectName(u"action_about")
+        self.action = QAction(LatexamWindow)
+        self.action.setObjectName(u"action")
+        self.centralwidget = QWidget(LatexamWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.text_logo = QLabel(self.centralwidget)
-        self.text_logo.setObjectName(u"text_logo")
-        self.text_logo.setGeometry(QRect(20, 20, 141, 141))
-        self.text_logo.setPixmap(QPixmap(u":/latexam/Latexam.png"))
-        self.text_logo.setScaledContents(True)
-        self.text_logo.setAlignment(Qt.AlignCenter)
-        self.text_title = QLabel(self.centralwidget)
-        self.text_title.setObjectName(u"text_title")
-        self.text_title.setGeometry(QRect(180, 40, 151, 31))
+        self.horizontalLayout_3 = QHBoxLayout(self.centralwidget)
+        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.output_status = QTreeWidget(self.centralwidget)
+        self.output_status.headerItem().setText(0, "")
+        QTreeWidgetItem(self.output_status)
+        QTreeWidgetItem(self.output_status)
+        QTreeWidgetItem(self.output_status)
+        self.output_status.setObjectName(u"output_status")
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.output_status.sizePolicy().hasHeightForWidth())
+        self.output_status.setSizePolicy(sizePolicy)
         font = QFont()
-        font.setPointSize(28)
-        font.setBold(False)
-        self.text_title.setFont(font)
+        font.setPointSize(12)
+        self.output_status.setFont(font)
+        self.output_status.header().setVisible(False)
+
+        self.horizontalLayout_2.addWidget(self.output_status)
+
         self.line = QFrame(self.centralwidget)
         self.line.setObjectName(u"line")
-        self.line.setGeometry(QRect(180, 90, 281, 16))
-        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShape(QFrame.Shape.VLine)
         self.line.setFrameShadow(QFrame.Shadow.Sunken)
-        self.text_content = QLabel(self.centralwidget)
-        self.text_content.setObjectName(u"text_content")
-        self.text_content.setGeometry(QRect(180, 110, 271, 81))
-        self.text_version = QLabel(self.centralwidget)
-        self.text_version.setObjectName(u"text_version")
-        self.text_version.setGeometry(QRect(340, 50, 121, 20))
-        self.button_ok = QPushButton(self.centralwidget)
-        self.button_ok.setObjectName(u"button_ok")
-        self.button_ok.setGeometry(QRect(390, 260, 75, 24))
-        AboutWindow.setCentralWidget(self.centralwidget)
 
-        self.retranslateUi(AboutWindow)
-        self.button_ok.clicked.connect(AboutWindow.close)
-        self.button_ok.clicked.connect(AboutWindow.deleteLater)
+        self.horizontalLayout_2.addWidget(self.line)
 
-        QMetaObject.connectSlotsByName(AboutWindow)
+        self.verticalLayout_3 = QVBoxLayout()
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.output_message = QTextBrowser(self.centralwidget)
+        self.output_message.setObjectName(u"output_message")
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(200)
+        sizePolicy1.setHeightForWidth(self.output_message.sizePolicy().hasHeightForWidth())
+        self.output_message.setSizePolicy(sizePolicy1)
+        font1 = QFont()
+        font1.setPointSize(9)
+        self.output_message.setFont(font1)
+        self.output_message.setInputMethodHints(Qt.InputMethodHint.ImhNone)
+        self.output_message.setOpenExternalLinks(True)
+
+        self.verticalLayout_3.addWidget(self.output_message)
+
+        self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.input_message = QPlainTextEdit(self.centralwidget)
+        self.input_message.setObjectName(u"input_message")
+        self.input_message.setMaximumSize(QSize(16777215, 109))
+        self.input_message.setFont(font1)
+
+        self.verticalLayout_2.addWidget(self.input_message)
+
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer)
+
+        self.button_previous = QPushButton(self.centralwidget)
+        self.button_previous.setObjectName(u"button_previous")
+        self.button_previous.setMinimumSize(QSize(60, 25))
+        self.button_previous.setMaximumSize(QSize(60, 25))
+
+        self.horizontalLayout.addWidget(self.button_previous)
+
+        self.button_next = QPushButton(self.centralwidget)
+        self.button_next.setObjectName(u"button_next")
+        self.button_next.setMinimumSize(QSize(60, 25))
+        self.button_next.setMaximumSize(QSize(60, 25))
+
+        self.horizontalLayout.addWidget(self.button_next)
+
+        self.button_answer = QPushButton(self.centralwidget)
+        self.button_answer.setObjectName(u"button_answer")
+        self.button_answer.setMinimumSize(QSize(60, 25))
+        self.button_answer.setMaximumSize(QSize(60, 25))
+
+        self.horizontalLayout.addWidget(self.button_answer)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout)
+
+
+        self.verticalLayout_3.addLayout(self.verticalLayout_2)
+
+
+        self.horizontalLayout_2.addLayout(self.verticalLayout_3)
+
+
+        self.horizontalLayout_3.addLayout(self.horizontalLayout_2)
+
+        self.verticalLayout = QVBoxLayout()
+        self.verticalLayout.setObjectName(u"verticalLayout")
+
+        self.horizontalLayout_3.addLayout(self.verticalLayout)
+
+        LatexamWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QMenuBar(LatexamWindow)
+        self.menubar.setObjectName(u"menubar")
+        self.menubar.setGeometry(QRect(0, 0, 800, 19))
+        self.menu_session = QMenu(self.menubar)
+        self.menu_session.setObjectName(u"menu_session")
+        self.menu_about = QMenu(self.menubar)
+        self.menu_about.setObjectName(u"menu_about")
+        LatexamWindow.setMenuBar(self.menubar)
+        QWidget.setTabOrder(self.input_message, self.output_message)
+        QWidget.setTabOrder(self.output_message, self.output_status)
+
+        self.menubar.addAction(self.menu_session.menuAction())
+        self.menubar.addAction(self.menu_about.menuAction())
+        self.menu_session.addAction(self.action_login)
+        self.menu_session.addAction(self.action_disconnect)
+        self.menu_session.addSeparator()
+        self.menu_session.addAction(self.action_exit)
+        self.menu_about.addAction(self.action_about)
+
+        self.retranslateUi(LatexamWindow)
+        self.menubar.triggered.connect(LatexamWindow.triggeredMenubar)
+        self.output_status.itemPressed.connect(LatexamWindow.onStatusClicked)
+        self.button_previous.clicked.connect(LatexamWindow.onPrevious)
+        self.button_next.clicked.connect(LatexamWindow.onNext)
+        self.button_answer.clicked.connect(LatexamWindow.onAnswer)
+
+        QMetaObject.connectSlotsByName(LatexamWindow)
     # setupUi
 
-    def retranslateUi(self, AboutWindow):
-        AboutWindow.setWindowTitle(QCoreApplication.translate("AboutWindow", u"\u5173\u4e8e Latexam", None))
-        self.text_title.setText(QCoreApplication.translate("AboutWindow", u"Latexam", None))
-        self.text_content.setText(QCoreApplication.translate("AboutWindow", u"<html><head/><body><p>\u201c\u661f\u5149\u4e8e\u5fc3\uff0c\u661f\u843d\u4e8e\u884c\u3002\u201d<br/>\u611f\u8c22\u4f60\u4f7f\u7528\u672c\u8f6f\u4ef6\uff01</p><p>\u672c\u8f6f\u4ef6\u4e13\u7528\u4e8e\u8ba1\u7b97\u673a\u7a0b\u5e8f\u8bbe\u8ba1\u8d5b\u4e8b\u4f5c\u54c1\uff0c<br/>\u8bf7\u52ff\u7528\u4f5c\u5176\u4ed6\u7528\u9014\uff01</p></body></html>", None))
-        self.text_version.setText(QCoreApplication.translate("AboutWindow", u"\u7248\u672c", None))
-        self.button_ok.setText(QCoreApplication.translate("AboutWindow", u"\u786e\u5b9a", None))
+    def retranslateUi(self, LatexamWindow):
+        LatexamWindow.setWindowTitle(QCoreApplication.translate("LatexamWindow", u"Latexam \u8003\u8bd5\u7cfb\u7edf", None))
+        self.action_login.setText(QCoreApplication.translate("LatexamWindow", u"\u52a0\u5165\u8003\u8bd5", None))
+        self.action_sessionmgr.setText(QCoreApplication.translate("LatexamWindow", u"\u4f1a\u8bdd\u7ba1\u7406\u5668", None))
+        self.action_disconnect.setText(QCoreApplication.translate("LatexamWindow", u"\u65ad\u5f00\u4f1a\u8bdd", None))
+        self.action_exit.setText(QCoreApplication.translate("LatexamWindow", u"\u9000\u51fa", None))
+        self.action_about.setText(QCoreApplication.translate("LatexamWindow", u"\u5173\u4e8eLatexam", None))
+        self.action.setText(QCoreApplication.translate("LatexamWindow", u"\u5e2e\u52a9", None))
+
+        __sortingEnabled = self.output_status.isSortingEnabled()
+        self.output_status.setSortingEnabled(False)
+        ___qtreewidgetitem = self.output_status.topLevelItem(0)
+        ___qtreewidgetitem.setText(0, QCoreApplication.translate("LatexamWindow", u"\u5f53\u524d\u65f6\u95f4", None));
+        ___qtreewidgetitem1 = self.output_status.topLevelItem(1)
+        ___qtreewidgetitem1.setText(0, QCoreApplication.translate("LatexamWindow", u"\u8003\u8bd5\u4fe1\u606f", None));
+        ___qtreewidgetitem2 = self.output_status.topLevelItem(2)
+        ___qtreewidgetitem2.setText(0, QCoreApplication.translate("LatexamWindow", u"\u8bd5\u5377\u4fe1\u606f", None));
+        self.output_status.setSortingEnabled(__sortingEnabled)
+
+        self.button_previous.setText(QCoreApplication.translate("LatexamWindow", u"\u4e0a\u4e00\u9898", None))
+        self.button_next.setText(QCoreApplication.translate("LatexamWindow", u"\u4e0b\u4e00\u9898", None))
+        self.button_answer.setText(QCoreApplication.translate("LatexamWindow", u"\u56de\u7b54", None))
+#if QT_CONFIG(shortcut)
+        self.button_answer.setShortcut(QCoreApplication.translate("LatexamWindow", u"Ctrl+Return", None))
+#endif // QT_CONFIG(shortcut)
+        self.menu_session.setTitle(QCoreApplication.translate("LatexamWindow", u"\u4f1a\u8bdd", None))
+        self.menu_about.setTitle(QCoreApplication.translate("LatexamWindow", u"\u5173\u4e8e", None))
     # retranslateUi
 

@@ -18,7 +18,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout,
     QLabel, QLineEdit, QMainWindow, QPushButton,
     QSizePolicy, QSpacerItem, QVBoxLayout, QWidget)
-import Latexam_rc
+from . import Latexam_rc
 
 class Ui_LoginWindow(object):
     def setupUi(self, LoginWindow):
@@ -629,7 +629,7 @@ class Ui_LoginWindow(object):
         self.input_password = QLineEdit(self.centralwidget)
         self.input_password.setObjectName(u"input_password")
         self.input_password.setMinimumSize(QSize(0, 25))
-        self.input_password.setEchoMode(QLineEdit.Password)
+        self.input_password.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.gridLayout.addWidget(self.input_password, 3, 1, 1, 1)
 
@@ -642,24 +642,24 @@ class Ui_LoginWindow(object):
         self.input_number = QLineEdit(self.centralwidget)
         self.input_number.setObjectName(u"input_number")
         self.input_number.setMinimumSize(QSize(0, 25))
-        self.input_number.setEchoMode(QLineEdit.Password)
+        self.input_number.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.gridLayout.addWidget(self.input_number, 2, 1, 1, 1)
 
         self.label_name = QLabel(self.centralwidget)
         self.label_name.setObjectName(u"label_name")
 
-        self.gridLayout.addWidget(self.label_name, 1, 0, 1, 1, Qt.AlignHCenter)
+        self.gridLayout.addWidget(self.label_name, 1, 0, 1, 1, Qt.AlignmentFlag.AlignHCenter)
 
         self.label_password = QLabel(self.centralwidget)
         self.label_password.setObjectName(u"label_password")
 
-        self.gridLayout.addWidget(self.label_password, 3, 0, 1, 1, Qt.AlignHCenter)
+        self.gridLayout.addWidget(self.label_password, 3, 0, 1, 1, Qt.AlignmentFlag.AlignHCenter)
 
         self.label_number = QLabel(self.centralwidget)
         self.label_number.setObjectName(u"label_number")
 
-        self.gridLayout.addWidget(self.label_number, 2, 0, 1, 1, Qt.AlignHCenter)
+        self.gridLayout.addWidget(self.label_number, 2, 0, 1, 1, Qt.AlignmentFlag.AlignHCenter)
 
         self.input_server = QLineEdit(self.centralwidget)
         self.input_server.setObjectName(u"input_server")
@@ -728,6 +728,7 @@ class Ui_LoginWindow(object):
         self.input_name.returnPressed.connect(self.input_number.setFocus)
         self.input_number.returnPressed.connect(self.key_login.click)
         self.key_cancel.clicked.connect(LoginWindow.deleteLater)
+        self.input_number.returnPressed.connect(self.input_password.setFocus)
 
         QMetaObject.connectSlotsByName(LoginWindow)
     # setupUi
