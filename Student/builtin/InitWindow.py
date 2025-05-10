@@ -1,7 +1,7 @@
 import os
 import ipaddress
 import socket
-import json
+import ujson as json
 import hashlib
 import requests
 from subprocess import run

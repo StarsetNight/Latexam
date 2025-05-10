@@ -44,3 +44,9 @@ class Exam(BaseModel):
     end_time: datetime  # 结束时间
     student_list: list[Student]  # 考试人员列表
 
+
+class AnswerSheet(BaseModel):
+    student: Student  # 学生
+    exam: Exam  # 考试
+    answers: list[str]  # 答案
+
