@@ -120,6 +120,14 @@ class LatexamApplication(QMainWindow):
         )
         if response.success:
             self.setWindowTitle(f"Latexam 考试系统管理面板 {VERSION} - 在线")
+            self.online = True
+            return True
+        else:
+            self.setWindowTitle(f"Latexam 考试系统管理面板 {VERSION} - 离线")
+            self.online = False
+            self.address = ""
+            self.password = ""
+            return False
 
     def onDisconnect(self) -> None:
         """

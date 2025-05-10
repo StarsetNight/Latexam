@@ -110,6 +110,16 @@ class LatexamApplication(QMainWindow):
         )
         if response.success:
             self.setWindowTitle(f"Latexam 考试系统 {VERSION} - 在线")
+            self.online = True
+            return True
+        else:
+            self.setWindowTitle(f"Latexam 考试系统 {VERSION} - 离线")
+            self.online = False
+            self.address = ""
+            self.username = ""
+            self.number = ""
+            self.password = ""
+            return False
 
     def onDisconnect(self) -> None:
         """
@@ -133,7 +143,6 @@ class LatexamApplication(QMainWindow):
     def onPrevious(self) -> None:
         # 将当前题目的索引减1
         self.index -= 1
-        self.ui.input_message.setEnabled(False)
         if self.paper.questions and self.index != len(self.paper.questions) - 1:  # 如果不是最后一题
             self.ui.button_next.setEnabled(True)
         if self.index != -1:  # 如果不是首页
@@ -199,7 +208,10 @@ class LoginApplication(QMainWindow):
         # 判断传入IP地址:端口是否合法（IP地址包括IPv4和IPv6形式也包括域名）
         # address格式：[<IPV6地址>]:<外部端口> <IPV4地址>:<外部端口> <域名>:<外部端口>
         self.setWindowTitle("Latexam - 正在连接服务器……")
-        if (address := self.ui.input_server.text()) and (password := self.ui.input_password.text()):
+        if (address := self.ui.input_server.text()) and \
+                (password := self.ui.input_password.text()) and \
+                (username := self.ui.input_name.text()) and \
+                (number := self.ui.input_number.text()):
             if address.count(":") > 1:  # IPv6
                 try:
                     ipaddress.IPv6Address(address[: address.rfind(":")].strip("[]"))
@@ -207,7 +219,7 @@ class LoginApplication(QMainWindow):
                     QMessageBox.critical(self, "Latexam - 错误", "IPv6地址格式错误！\n"
                                                                  "正确格式：[<IPV6地址>]:<外部端口>")
                     self.ui.input_server.setFocus()
-                    self.setWindowTitle("Latexam - 登录管理面板")
+                    self.setWindowTitle("Latexam - 登录考试系统")
                     return
             else:  # IPv4
                 try:
@@ -217,20 +229,22 @@ class LoginApplication(QMainWindow):
                     QMessageBox.critical(self, "Latexam - 错误", "IPv4地址格式错误！\n"
                                                                  "正确格式：<IPV4地址>:<外部端口>")
                     self.ui.input_server.setFocus()
-                    self.setWindowTitle("Latexam - 登录管理面板")
+                    self.setWindowTitle("Latexam - 登录考试系统")
                     return
 
             password = hashlib.sha256(password.encode()).hexdigest()
 
             self.parent_window.address = address
+            self.parent_window.username = username
+            self.parent_window.number = number
             self.parent_window.password = password
             self.parent_window.onConnect()
             self.close()
             self.deleteLater()
         else:
-            QMessageBox.critical(self, "Latexam - 错误", "服务器地址或密码为空。")
+            QMessageBox.critical(self, "Latexam - 错误", "必填项存在空字段，请填写完整。")
             self.ui.input_server.setFocus()
-            self.setWindowTitle("Latexam - 登录管理面板")
+            self.setWindowTitle("Latexam - 登录考试系统")
             return
 
 
