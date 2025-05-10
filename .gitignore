@@ -172,3 +172,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# 与项目无关的目录
+Maintainer/papers/
+Maintainer/log/
