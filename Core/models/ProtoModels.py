@@ -5,9 +5,12 @@ from datetime import datetime
 from typing import Any
 
 
+class TokenData(BaseModel):
+    uid: int
+    exp: datetime | None = None
+
 class BaseData(BaseModel):
     time: int = datetime.now().timestamp()
-    by: int  # 发送方的准考证号
 
 
 class StudentLogin(BaseData):

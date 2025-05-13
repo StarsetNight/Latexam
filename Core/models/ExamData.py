@@ -1,5 +1,14 @@
 from datetime import datetime
-from .BaseModel import BaseModel
+
+from Core.models.BaseModel import BaseModel
+
+
+option_str_ = {
+    0: "A",
+    1: "B",
+    2: "C",
+    3: "D"
+}
 
 
 class Question(BaseModel):
@@ -17,6 +26,9 @@ class ObjectiveQuestion(Question):
     type = "objective"
     options: list[Option]
 
+    def get_correct(self) -> list[str]:
+        return [option_str_[self.options.index(i)] for i in [i for i in self.options if i.correct]]
+
 
 class SubjectiveQuestion(Question):
     type = "subjective"
@@ -30,7 +42,7 @@ class Paper(BaseModel):
 
 
 class Student(BaseModel):
-    uid: int  # 准考证号
+    uid: int
     nickname: str  # 名字
     password: str
 
@@ -42,13 +54,7 @@ class Exam(BaseModel):
     end_time: datetime  # 结束时间
     student_list: list[Student]  # 考试人员列表
 
-
-
-
-if __name__ == "__main__":
-    s = Student(number=114514, name="田所浩二", password="哼哼啊啊啊")
-    q = SubjectiveQuestion(title="你是萝莉控吗", score=114, judgement_reference="考官酌情给分")
-    p = Paper(serial_number=114514, title="你有这么高速的考试进入璃虹港，记住我给出的试卷", questions=[q])
-    e = Exam(paper=p, title=p.title, start_time=datetime.now(), end_time=datetime.now(), student_list=[s])
-    print(e.json())
-    print(datetime.fromisoformat("2025-04-23T20:53:09.643131"))
+class AnswerSheet(BaseModel):
+    student: Student
+    exam: Exam
+    answers: list[str]
