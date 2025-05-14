@@ -11,15 +11,17 @@ option_str_ = {
 }
 
 
+class Option(BaseModel):
+    correct: bool
+    text: str
+
+
 class Question(BaseModel):
     title: str
     type: str
     score: int
-
-
-class Option(BaseModel):
-    correct: bool
-    text: str
+    options: list[Option]
+    judgement_reference: str
 
 
 class ObjectiveQuestion(Question):
@@ -32,7 +34,6 @@ class ObjectiveQuestion(Question):
 
 class SubjectiveQuestion(Question):
     type = "subjective"
-    judgement_reference: str
 
 
 class Paper(BaseModel):
@@ -53,6 +54,7 @@ class Exam(BaseModel):
     start_time: datetime  # 开始时间
     end_time: datetime  # 结束时间
     student_list: list[Student]  # 考试人员列表
+
 
 class AnswerSheet(BaseModel):
     student: Student

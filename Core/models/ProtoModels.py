@@ -9,6 +9,7 @@ class TokenData(BaseModel):
     uid: int
     exp: datetime | None = None
 
+
 class BaseData(BaseModel):
     time: int = datetime.now().timestamp()
 

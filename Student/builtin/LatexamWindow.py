@@ -778,6 +778,19 @@ class Ui_LatexamWindow(object):
         ___qtreewidgetitem2.setText(0, QCoreApplication.translate("LatexamWindow", u"\u8bd5\u5377\u4fe1\u606f", None));
         self.output_status.setSortingEnabled(__sortingEnabled)
 
+        self.output_message.setHtml(QCoreApplication.translate("LatexamWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt; font-weight:700;\">\u6b22\u8fce\u8bbf\u95ee Latexam \u8003\u8bd5\u7cfb\u7edf\uff01</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt; font-weight:700;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-"
+                        "right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">\u6b32</span><span style=\" font-size:14pt; color:#ffaa00;\">\u52a0\u5165\u8003\u8bd5</span><span style=\" font-size:14pt;\">\uff0c\u8bf7\u70b9\u9009\u5de5\u5177\u680f </span><span style=\" font-size:14pt; color:#5500ff;\">\u4f1a\u8bdd -&gt; \u52a0\u5165\u8003\u8bd5</span><span style=\" font-size:14pt;\">\uff1b</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:14pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:14pt;\">\u795d\u60a8\u8003\u8bd5\u987a\u5229\uff01</span></p></body></html>", None))
         self.button_previous.setText(QCoreApplication.translate("LatexamWindow", u"\u4e0a\u4e00\u9898", None))
         self.button_next.setText(QCoreApplication.translate("LatexamWindow", u"\u4e0b\u4e00\u9898", None))
         self.button_answer.setText(QCoreApplication.translate("LatexamWindow", u"\u56de\u7b54", None))

@@ -23,7 +23,7 @@ from .AboutWindow import Ui_AboutWindow
 from .LatexamWindow import Ui_LatexamWindow
 from .LoginDialog import Ui_LoginWindow
 
-from .models import *
+from Core.models import *
 
 VERSION = "v1.0.0 Alpha"
 
@@ -53,7 +53,7 @@ class LatexamApplication(QMainWindow):
     mode: str = ""  # paper是试卷编辑模式，exam是考试编辑模式，mark是批改试卷模式
     index: int = -1
     option_index: int = 0  # 选项索引
-    question: Question
+    question: Question | ObjectiveQuestion | SubjectiveQuestion
     status: str = ""  # 编辑指示器，指示正在编辑的对象
 
     def __init__(self):
@@ -121,16 +121,16 @@ class LatexamApplication(QMainWindow):
         :return: 成功返回True，否则返回False
         """
         self.client = httpx.Client()
-        response: LoginResults = LoginResults.parse_raw(
-            self.client.post(url=f"http://{self.address}/api/v1/login",
-                             json={"password": self.password}).content
-        )
-        # TODO 登录
+        response = LoginResults.parse_obj(self.client.post(f"{self.address}/api/v1/login",
+                                                           json=StudentLogin(uid=0, password=self.password)
+                                                           .dict()).json())
         if response.success:
             self.setWindowTitle(f"Latexam 考试系统管理面板 {VERSION} - 在线")
             self.online = True
             return True
         else:
+            QMessageBox.warning(self, "Latexam - 警告", f"无法登录到 Latexam 服务器。\n"
+                                                        f"服务器报告的信息：{response.msg}")
             self.setWindowTitle(f"Latexam 考试系统管理面板 {VERSION} - 离线")
             self.client.close()
             self.online = False
@@ -181,7 +181,7 @@ class LatexamApplication(QMainWindow):
             QMessageBox.critical(self, "Latexam - 错误", "该目录不是试卷工程目录！")
             return
         with open(os.path.join(directory, "paper.lep"), "r", encoding="utf-8") as file:
-            self.paper = Paper(**json.load(file))
+            self.paper = Paper.parse_raw(file.read())
             self.paper_path = directory
         self.ui.text_status.setText("首页")
         self.signal.set_output_box.emit(f"<h2>{self.paper.title}</h2>"
@@ -200,10 +200,13 @@ class LatexamApplication(QMainWindow):
             QMessageBox.warning(self, "Latexam - 警告", "没有试卷被打开。")
             return
         with open(os.path.join(self.paper_path, "paper.lep"), "w", encoding="utf-8") as file:
-            json.dump(self.paper.dict(), file, ensure_ascii=False)
+            file.write(self.paper.json(ensure_ascii=False))
             QMessageBox.information(self, "Latexam - 保存试卷", f"试卷 {self.paper.title} 已保存。")
 
     def onEditExam(self) -> None:
+        if not self.online:
+            QMessageBox.warning(self, "Latexam - 警告", "请先连接到Latexam服务器。")
+            return
         self.ui.input_message.setEnabled(False)
         self.ui.button_send.setEnabled(False)
         self.ui.button_next.setEnabled(False)
@@ -214,9 +217,15 @@ class LatexamApplication(QMainWindow):
         self.ui.button_edit.setEnabled(True)
 
         self.mode = "exam"
-        # TODO 先从服务端获取考试信息
+        exam_data = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info").json())
+        self.signal.set_output_box.emit(f"<h2>{exam_data.data.title}</h2>"
+                                        f"<p><font color='grey'>开始时间：{exam_data.data.start_time}</font></p>"
+                                        f"<p><font color='grey'>结束时间：{exam_data.data.end_time}</font></p>")
 
     def onMarkExam(self) -> None:
+        if not self.online:
+            QMessageBox.warning(self, "Latexam - 警告", "请先连接到Latexam服务器。")
+            return
         self.ui.input_message.setEnabled(False)
         self.ui.button_send.setEnabled(False)
         self.ui.button_next.setEnabled(False)
@@ -257,7 +266,7 @@ class LatexamApplication(QMainWindow):
                 self.onRender()
 
                 self.ui.text_status.setText("编辑题干")
-                self.ui.input_message.setPlainText(self.question.title)
+                self.ui.input_message.setPlainText(self.paper.questions[self.index].title)
             else:
                 self.ui.text_status.setText("首页")
                 self.ui.button_previous.setEnabled(False)
@@ -314,7 +323,7 @@ class LatexamApplication(QMainWindow):
             self.onRender()
 
             self.ui.text_status.setText("编辑题干")
-            self.ui.input_message.setPlainText(self.question.title)
+            self.ui.input_message.setPlainText(self.paper.questions[self.index].title)
 
         else:  # 阅卷模式
             self.index += 1
@@ -339,26 +348,26 @@ class LatexamApplication(QMainWindow):
         """
         if self.mode == "paper":
             if self.paper.questions[self.index].type == "objective":
-                self.question = ObjectiveQuestion(**self.paper.questions[self.index].dict())
-                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.question.score}分）</p>"
-                                                f"<p>{self.question.title}</p>")
-                for option in self.question.options:
+                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.paper.questions[self.index].score}分）</p>"
+                                                f"<p>{self.paper.questions[self.index].title}</p>")
+                for option in self.paper.questions[self.index].options:
                     if option.correct:
                         self.signal.append_output_box.emit(f"<p><font color='red'>{option.text}</font></p>")
                     else:
                         self.signal.append_output_box.emit(f"<p>{option.text}</p>")
             else:
-                self.question = SubjectiveQuestion(**self.paper.questions[self.index].dict())
-                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.question.score}分）</p>"
-                                                f"<p>{self.question.title}</p>")
+                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.paper.questions[self.index].score}分）</p>"
+                                                f"<p>{self.paper.questions[self.index].title}</p>")
                 self.signal.append_output_box.emit(f"<p><font color='grey'>判题标准："
-                                                   f"{self.question.judgement_reference}</font></p>")
+                                                   f"{self.paper.questions[self.index].judgement_reference}</font></p>")
         else:
             if self.sheet.exam.paper.questions[self.index].type == "objective":
-                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.sheet.exam.paper.questions[self.index].score}分）</p>"
+                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题"
+                                                f"{self.sheet.exam.paper.questions[self.index].score}分）</p>"
                                                 f"<p>本题为客观题，无需阅卷，请批阅其他题目。</p>")
             else:
-                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.sheet.exam.paper.questions[self.index].score}分）</p>"
+                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题"
+                                                f"{self.sheet.exam.paper.questions[self.index].score}分）</p>"
                                                 f"<p>{self.sheet.answers[self.index]}</p>")
 
     def onSend(self) -> None:
@@ -439,17 +448,17 @@ class LatexamApplication(QMainWindow):
                 self.ui.button_send.setText("删除")
             else:
                 # 先修改本题分数
-                score = QInputDialog.getInt(self, "修改分数", "请输入本题分数", self.question.score, 0, 2147483647, 1)
+                score = QInputDialog.getInt(self, "修改分数", "请输入本题分数", self.paper.questions[self.index].score, 0, 2147483647, 1)
                 self.paper.questions[self.index].score = score[0]
                 self.onRender()
                 self.ui.button_send.setText("发送")
         else:  # 编辑考试模式
-            file_path = QFileDialog.getOpenFileName(self, "选择考试文件", "exams/", "Latexam 考试文件 (*.lexam)")[0]
+            file_path = QFileDialog.getOpenFileName(self, "选择考试文件", "exams/", "Latexam 考试文件 (*.lep)")[0]
             if not file_path:
                 self.mode = ""
                 return
             with open(file_path, "r", encoding="utf-8") as file:
-                self.exam.paper = Paper(**json.load(file))
+                self.exam.paper = Paper.parse_raw(file.read())
             self.exam.title = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试标题")[0]
             self.exam.serial_number = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试序列号")[0]
             self.exam.start_time = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试开始的时间戳")[0]
@@ -502,7 +511,17 @@ class LoginApplication(QMainWindow):
         # 判断传入IP地址:端口是否合法（IP地址包括IPv4和IPv6形式也包括域名）
         # address格式：[<IPV6地址>]:<外部端口> <IPV4地址>:<外部端口> <域名>:<外部端口>
         self.setWindowTitle("Latexam - 正在连接服务器……")
-        if (address := self.ui.input_server.text()) and (password := self.ui.input_password.text()):
+        if (final_address := self.ui.input_server.text()) and (password := self.ui.input_password.text()):
+            if final_address.startswith("http://"):
+                address = final_address[7:]
+            elif final_address.startswith("https://"):
+                address = final_address[8:]
+            else:
+                address = final_address
+                QMessageBox.warning(self, "Latexam - 警告", "服务器地址应当以http(s)://开头，"
+                                                            "已自动添加http://，\n"
+                                                            "按 OK 键继续。")
+                final_address = "http://" + final_address
             if address.count(":") > 1:  # IPv6
                 try:
                     ipaddress.IPv6Address(address[: address.rfind(":")].strip("[]"))
@@ -525,7 +544,7 @@ class LoginApplication(QMainWindow):
 
             password = hashlib.sha256(password.encode()).hexdigest()
 
-            self.parent_window.address = address
+            self.parent_window.address = final_address
             self.parent_window.password = password
             self.parent_window.onConnect()
             self.close()

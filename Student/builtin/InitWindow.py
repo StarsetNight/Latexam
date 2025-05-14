@@ -3,7 +3,7 @@ import ipaddress
 import socket
 import ujson as json
 import hashlib
-import requests
+import httpx
 from subprocess import run
 
 from PySide6.QtCore import Signal, QObject
@@ -23,7 +23,7 @@ from .AboutWindow import Ui_AboutWindow
 from .LatexamWindow import Ui_LatexamWindow
 from .LoginDialog import Ui_LoginWindow
 
-from Maintainer.builtin.models import *
+from Core.models import *
 
 VERSION = "v1.0.0 Alpha"
 
@@ -39,6 +39,7 @@ class LatexamSignal(QObject):
 class LatexamApplication(QMainWindow):
     child_window: QWidget
 
+    client: httpx.Client
     address: str = ""
     username: str = ""
     number: str = ""
@@ -47,9 +48,10 @@ class LatexamApplication(QMainWindow):
 
     paper: Paper
     exam: Exam
+    sheet: AnswerSheet
 
     index: int = -1
-    question: Question
+    question: Question | ObjectiveQuestion | SubjectiveQuestion
 
     def __init__(self):
         super().__init__()
@@ -103,16 +105,21 @@ class LatexamApplication(QMainWindow):
         执行登录操作，返回是否成功
         :return: 成功返回True，否则返回False
         """
-        response: LoginResults = LoginResults.parse_raw(
-            requests.post(f"http://{self.address}/api/v1/login",
-                          json=StudentLogin(uid=self.number, password=self.password).model_dump_json()
-                          ).content
-        )
+        self.client = httpx.Client()
+        response = LoginResults.parse_obj(self.client.post(f"{self.address}/api/v1/login",
+                                                           json=StudentLogin(uid=self.number, password=self.password)
+                                                           .dict()).json())
         if response.success:
+            QMessageBox.information(self, "Latexam - 信息", f"登录成功，欢迎使用Latexam考试系统！\n"
+                                                            f"您的学号是 {self.number}；\n"
+                                                            f"您的姓名将根据服务端信息被更改为 {response.data.nickname}。")
             self.setWindowTitle(f"Latexam 考试系统 {VERSION} - 在线")
             self.online = True
+            self.username = response.data.nickname
             return True
         else:
+            QMessageBox.warning(self, "Latexam - 警告", f"无法登录到 Latexam 服务器。\n"
+                                                        f"服务器报告的信息：{response.msg}")
             self.setWindowTitle(f"Latexam 考试系统 {VERSION} - 离线")
             self.online = False
             self.address = ""
@@ -178,15 +185,13 @@ class LatexamApplication(QMainWindow):
         :return:
         """
         if self.paper.questions[self.index].type == "objective":
-            self.question = ObjectiveQuestion(**self.paper.questions[self.index].dict())
-            self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.question.score}分）</p>"
-                                            f"<p>{self.question.title}</p>")
-            for option in self.question.options:
+            self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.paper.questions[self.index].score}分）</p>"
+                                            f"<p>{self.paper.questions[self.index].title}</p>")
+            for option in self.paper.questions[self.index].options:
                 self.signal.append_output_box.emit(f"<p>{option.text}</p>")
         else:
-            self.question = SubjectiveQuestion(**self.paper.questions[self.index].dict())
-            self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.question.score}分）</p>"
-                                            f"<p>{self.question.title}</p>")
+            self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.paper.questions[self.index].score}分）</p>"
+                                            f"<p>{self.paper.questions[self.index].title}</p>")
 
     def onAnswer(self) -> None:
         # TODO 回答
@@ -208,10 +213,20 @@ class LoginApplication(QMainWindow):
         # 判断传入IP地址:端口是否合法（IP地址包括IPv4和IPv6形式也包括域名）
         # address格式：[<IPV6地址>]:<外部端口> <IPV4地址>:<外部端口> <域名>:<外部端口>
         self.setWindowTitle("Latexam - 正在连接服务器……")
-        if (address := self.ui.input_server.text()) and \
+        if (final_address := self.ui.input_server.text()) and \
                 (password := self.ui.input_password.text()) and \
                 (username := self.ui.input_name.text()) and \
                 (number := self.ui.input_number.text()):
+            if final_address.startswith("http://"):
+                address = final_address[7:]
+            elif final_address.startswith("https://"):
+                address = final_address[8:]
+            else:
+                address = final_address
+                QMessageBox.warning(self, "Latexam - 警告", "服务器地址应当以http(s)://开头，"
+                                                            "已自动添加http://，\n"
+                                                            "按 OK 键继续。")
+                final_address = "http://" + final_address
             if address.count(":") > 1:  # IPv6
                 try:
                     ipaddress.IPv6Address(address[: address.rfind(":")].strip("[]"))
@@ -234,7 +249,7 @@ class LoginApplication(QMainWindow):
 
             password = hashlib.sha256(password.encode()).hexdigest()
 
-            self.parent_window.address = address
+            self.parent_window.address = final_address
             self.parent_window.username = username
             self.parent_window.number = number
             self.parent_window.password = password
