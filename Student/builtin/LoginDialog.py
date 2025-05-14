@@ -642,7 +642,7 @@ class Ui_LoginWindow(object):
         self.input_number = QLineEdit(self.centralwidget)
         self.input_number.setObjectName(u"input_number")
         self.input_number.setMinimumSize(QSize(0, 25))
-        self.input_number.setEchoMode(QLineEdit.EchoMode.Password)
+        self.input_number.setEchoMode(QLineEdit.EchoMode.Normal)
 
         self.gridLayout.addWidget(self.input_number, 2, 1, 1, 1)
 

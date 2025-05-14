@@ -1,9 +1,9 @@
 import os
 import ipaddress
 import socket
-import json
+import ujson as json
 import hashlib
-import requests
+import httpx
 from subprocess import run
 
 from PySide6.QtCore import Signal, QObject
@@ -23,7 +23,7 @@ from .AboutWindow import Ui_AboutWindow
 from .LatexamWindow import Ui_LatexamWindow
 from .LoginDialog import Ui_LoginWindow
 
-from Maintainer.builtin.models import *
+from Core.models import *
 
 VERSION = "v1.0.0 Alpha"
 
@@ -39,18 +39,20 @@ class LatexamSignal(QObject):
 class LatexamApplication(QMainWindow):
     child_window: QWidget
 
+    client: httpx.Client
     address: str = ""
     password: str = ""
     online: bool = False
 
+    sheet: AnswerSheet
     paper: Paper
     paper_path: str = ""
     exam: Exam
+    score_list: list[int]
 
-    mode: str = ""  # paper是试卷编辑模式，exam是考试编辑模式
+    mode: str = ""  # paper是试卷编辑模式，exam是考试编辑模式，mark是批改试卷模式
     index: int = -1
     option_index: int = 0  # 选项索引
-    question: Question
     status: str = ""  # 编辑指示器，指示正在编辑的对象
 
     def __init__(self):
@@ -104,6 +106,8 @@ class LatexamApplication(QMainWindow):
                 self.onSavePaper()
             case "新建/编辑考试":
                 self.onEditExam()
+            case "批改考试试卷":
+                self.onMarkExam()
             case "关于Latexam":
                 self.child_window = AboutApplication()
                 self.child_window.show()
@@ -115,15 +119,19 @@ class LatexamApplication(QMainWindow):
         执行登录操作，返回是否成功
         :return: 成功返回True，否则返回False
         """
-        response: LoginResults = LoginResults.parse_raw(
-            requests.post(f"http://{self.address}/api/v1/login", json={"password": self.password}).content
-        )
+        self.client = httpx.Client()
+        response = LoginResults.parse_obj(self.client.post(f"{self.address}/api/v1/login",
+                                                           json=LoginData(uid=0, password=self.password)
+                                                           .dict()).json())
         if response.success:
             self.setWindowTitle(f"Latexam 考试系统管理面板 {VERSION} - 在线")
             self.online = True
             return True
         else:
+            QMessageBox.warning(self, "Latexam - 警告", f"无法登录到 Latexam 服务器。\n"
+                                                        f"服务器报告的信息：{response.msg}")
             self.setWindowTitle(f"Latexam 考试系统管理面板 {VERSION} - 离线")
+            self.client.close()
             self.online = False
             self.address = ""
             self.password = ""
@@ -140,6 +148,7 @@ class LatexamApplication(QMainWindow):
         if dialog == QMessageBox.Yes:
             self.setWindowTitle(f"Latexam 考试系统管理面板 {VERSION} - 离线")
             self.online = False
+            self.client.close()
             self.address = ""
             self.password = ""
 
@@ -171,7 +180,7 @@ class LatexamApplication(QMainWindow):
             QMessageBox.critical(self, "Latexam - 错误", "该目录不是试卷工程目录！")
             return
         with open(os.path.join(directory, "paper.lep"), "r", encoding="utf-8") as file:
-            self.paper = Paper(**json.load(file))
+            self.paper = Paper.parse_raw(file.read())
             self.paper_path = directory
         self.ui.text_status.setText("首页")
         self.signal.set_output_box.emit(f"<h2>{self.paper.title}</h2>"
@@ -186,87 +195,183 @@ class LatexamApplication(QMainWindow):
         self.mode = "paper"
 
     def onSavePaper(self) -> None:
-        if not self.paper_path:
+        if not self.paper_path and self.mode != "paper":
             QMessageBox.warning(self, "Latexam - 警告", "没有试卷被打开。")
             return
         with open(os.path.join(self.paper_path, "paper.lep"), "w", encoding="utf-8") as file:
-            json.dump(self.paper.dict(), file, ensure_ascii=False)
+            file.write(self.paper.json(ensure_ascii=False))
             QMessageBox.information(self, "Latexam - 保存试卷", f"试卷 {self.paper.title} 已保存。")
 
     def onEditExam(self) -> None:
-        pass
+        if not self.online:
+            QMessageBox.warning(self, "Latexam - 警告", "请先连接到Latexam服务器。")
+            return
+        self.ui.input_message.setEnabled(False)
+        self.ui.button_send.setEnabled(False)
+        self.ui.button_next.setEnabled(False)
+        self.ui.button_previous.setEnabled(False)
+        self.ui.button_objective.setEnabled(False)
+        self.ui.button_subjective.setEnabled(False)
+
+        self.ui.button_edit.setEnabled(True)
+
+        self.mode = "exam"
+        exam_data = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info").json())
+        self.signal.set_output_box.emit(f"<h2>{exam_data.data.title}</h2>"
+                                        f"<p><font color='grey'>开始时间：{exam_data.data.start_time}</font></p>"
+                                        f"<p><font color='grey'>结束时间：{exam_data.data.end_time}</font></p>")
+
+    def onMarkExam(self) -> None:
+        if not self.online:
+            QMessageBox.warning(self, "Latexam - 警告", "请先连接到Latexam服务器。")
+            return
+        self.ui.input_message.setEnabled(False)
+        self.ui.button_send.setEnabled(False)
+        self.ui.button_next.setEnabled(False)
+        self.ui.button_previous.setEnabled(False)
+        self.ui.button_objective.setEnabled(False)
+        self.ui.button_subjective.setEnabled(False)
+        self.ui.button_edit.setEnabled(False)
+
+        # 首先获取想要批卷的考生准考证号
+        number: str = QInputDialog.getText(self, "Latexam - 批卷", "请输入考生准考证号")[0]
+        if not number:
+            return
+        if not number.isdigit():
+            QMessageBox.warning(self, "Latexam - 警告", "准考证号必须为数字。")
+            return
+
+        self.mode = "mark"
+
+        # 先获取考试信息
+        self.exam = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info").json())
+
+        # TODO 从服务端获取答题卡
+
+        self.score_list = [0] * len(self.sheet.answers)
 
     def onPrevious(self) -> None:
         # 将当前题目的索引减1
-        self.index -= 1
-        self.option_index = 0
-        self.ui.input_message.setEnabled(False)
-        if self.paper.questions and self.index != len(self.paper.questions) - 1:  # 如果不是最后一题
-            self.ui.button_next.setEnabled(True)
-        if self.index != -1:  # 如果不是首页
+        if self.mode == "paper":
+            self.index -= 1
+            self.option_index = 0
+            self.ui.input_message.setEnabled(False)
+            if self.paper.questions and self.index != len(self.paper.questions) - 1:  # 如果不是最后一题
+                self.ui.button_next.setEnabled(True)
+            if self.index != -1:  # 如果不是首页
+                self.ui.button_previous.setEnabled(True)
+                self.ui.button_send.setEnabled(True)
+                self.ui.button_edit.setEnabled(True)
+                self.ui.button_send.setEnabled(True)
+                self.ui.button_send.setText("删除")
+
+                self.onRender()
+
+                self.ui.text_status.setText("编辑题干")
+                self.ui.input_message.setPlainText(self.paper.questions[self.index].title)
+            else:
+                self.ui.text_status.setText("首页")
+                self.ui.button_previous.setEnabled(False)
+                if self.paper.questions:
+                    self.ui.button_next.setEnabled(True)
+                self.ui.button_send.setEnabled(False)
+                self.ui.button_edit.setEnabled(False)
+                self.signal.clear_input_box.emit()
+                self.signal.set_output_box.emit(f"<h2>{self.paper.title}</h2>"
+                                                f"<p><font color='grey'>序列号：{self.paper.serial_number}</font></p>"
+                                                f"<p>点选 <font color='blue'>客观题</font> 以在第一题加入客观题；</p>"
+                                                f"<p>点选 <font color='blue'>主观题</font> 以在第一题加入主观题；</p>"
+                                                f"<p>点选 <font color='blue'>下一题</font> 以进入<strong>已有</strong>的第一题。</p>")
+        else:  # 阅卷模式
+            self.index -= 1
+            self.ui.button_edit.setEnabled(False)
+            self.ui.button_objective.setEnabled(False)
+            self.ui.button_subjective.setEnabled(False)
+            if self.index != len(self.sheet.answers) - 1:  # 如果不是最后一题
+                self.ui.button_next.setEnabled(True)
+            if self.index != -1:  # 如果不是首页
+                self.ui.input_message.setEnabled(True)
+                self.ui.button_previous.setEnabled(True)
+                self.ui.button_send.setEnabled(True)
+                self.onRender()
+                self.signal.set_input_box.emit(self.score_list[self.index])
+                self.ui.text_status.setText("阅卷打分")
+            else:
+                self.ui.text_status.setText("首页")
+                self.ui.button_previous.setEnabled(False)
+                self.ui.button_next.setEnabled(True)
+                self.ui.button_send.setEnabled(False)
+                self.signal.clear_input_box.emit()
+                exam_data = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info").json())
+                self.signal.set_output_box.emit(f"<h2>{self.exam.title}</h2>"
+                                                f"<p><font color='grey'>序列号：{self.exam.uuid}"
+                                                f"</font></p>"
+                                                f"<p>点选 <font color='blue'>下一题</font> 以进入第一题的阅卷。</p>")
+
+    def onNext(self) -> None:
+        # 将当前题目的索引加1
+        if self.mode == "paper":
+            self.index += 1
+            self.option_index = 0
+            self.ui.input_message.setEnabled(False)
             self.ui.button_previous.setEnabled(True)
-            self.ui.button_send.setEnabled(True)
             self.ui.button_edit.setEnabled(True)
             self.ui.button_send.setEnabled(True)
             self.ui.button_send.setText("删除")
+            if self.index != len(self.paper.questions) - 1:  # 如果没有到达最后一题
+                self.ui.button_next.setEnabled(True)
+            else:
+                self.ui.button_next.setEnabled(False)
 
             self.onRender()
 
             self.ui.text_status.setText("编辑题干")
-            self.ui.input_message.setPlainText(self.question.title)
-        else:
-            self.ui.text_status.setText("首页")
-            self.ui.button_previous.setEnabled(False)
-            if self.paper.questions:
-                self.ui.button_next.setEnabled(True)
-            self.ui.button_send.setEnabled(False)
+            self.ui.input_message.setPlainText(self.paper.questions[self.index].title)
+
+        else:  # 阅卷模式
+            self.index += 1
             self.ui.button_edit.setEnabled(False)
-            self.signal.clear_input_box.emit()
-            self.signal.set_output_box.emit(f"<h2>{self.paper.title}</h2>"
-                                            f"<p><font color='grey'>序列号：{self.paper.serial_number}</font></p>"
-                                            f"<p>点选 <font color='blue'>客观题</font> 以在第一题加入客观题；</p>"
-                                            f"<p>点选 <font color='blue'>主观题</font> 以在第一题加入主观题；</p>"
-                                            f"<p>点选 <font color='blue'>下一题</font> 以进入<strong>已有</strong>的第一题。</p>")
-
-    def onNext(self) -> None:
-        # 将当前题目的索引加1
-        self.index += 1
-        self.option_index = 0
-        self.ui.input_message.setEnabled(False)
-        self.ui.button_previous.setEnabled(True)
-        self.ui.button_edit.setEnabled(True)
-        self.ui.button_send.setEnabled(True)
-        self.ui.button_send.setText("删除")
-        if self.index != len(self.paper.questions) - 1:  # 如果没有到达最后一题
-            self.ui.button_next.setEnabled(True)
-        else:
-            self.ui.button_next.setEnabled(False)
-
-        self.onRender()
-
-        self.ui.text_status.setText("编辑题干")
-        self.ui.input_message.setPlainText(self.question.title)
+            self.ui.button_objective.setEnabled(False)
+            self.ui.button_subjective.setEnabled(False)
+            self.ui.input_message.setEnabled(True)
+            self.ui.button_previous.setEnabled(True)
+            self.ui.button_send.setEnabled(True)
+            if self.index != len(self.sheet.answers) - 1:  # 如果不是最后一题
+                self.ui.button_next.setEnabled(True)
+            else:
+                self.ui.button_next.setEnabled(False)
+            self.onRender()
+            self.signal.set_input_box.emit(self.score_list[self.index])
+            self.ui.text_status.setText("阅卷打分")
 
     def onRender(self) -> None:
         """
         渲染当前题目
         :return:
         """
-        if self.paper.questions[self.index].type == "objective":
-            self.question = ObjectiveQuestion(**self.paper.questions[self.index].dict())
-            self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.question.score}分）</p>"
-                                            f"<p>{self.question.title}</p>")
-            for option in self.question.options:
-                if option.correct:
-                    self.signal.append_output_box.emit(f"<p><font color='red'>{option.text}</font></p>")
-                else:
-                    self.signal.append_output_box.emit(f"<p>{option.text}</p>")
+        if self.mode == "paper":
+            if self.paper.questions[self.index].type == "objective":
+                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.paper.questions[self.index].score}分）</p>"
+                                                f"<p>{self.paper.questions[self.index].title}</p>")
+                for option in self.paper.questions[self.index].options:
+                    if option.correct:
+                        self.signal.append_output_box.emit(f"<p><font color='red'>{option.text}</font></p>")
+                    else:
+                        self.signal.append_output_box.emit(f"<p>{option.text}</p>")
+            else:
+                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.paper.questions[self.index].score}分）</p>"
+                                                f"<p>{self.paper.questions[self.index].title}</p>")
+                self.signal.append_output_box.emit(f"<p><font color='grey'>判题标准："
+                                                   f"{self.paper.questions[self.index].judgement_reference}</font></p>")
         else:
-            self.question = SubjectiveQuestion(**self.paper.questions[self.index].dict())
-            self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题{self.question.score}分）</p>"
-                                            f"<p>{self.question.title}</p>")
-            self.signal.append_output_box.emit(f"<p><font color='grey'>判题标准："
-                                               f"{self.question.judgement_reference}</font></p>")
+            if self.exam.paper.questions[self.index].type == "objective":
+                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题"
+                                                f"{self.exam.paper.questions[self.index].score}分）</p>"
+                                                f"<p>本题为客观题，无需阅卷，请批阅其他题目。</p>")
+            else:
+                self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题"
+                                                f"{self.exam.paper.questions[self.index].score}分）</p>"
+                                                f"<p>{self.sheet.answers[self.index]}</p>")
 
     def onSend(self) -> None:
         # 如果是修改题目
@@ -323,22 +428,55 @@ class LatexamApplication(QMainWindow):
             self.onRender()
 
         # 如果是删除题目
-        else:
+        elif self.ui.button_send.text() == "删除" and self.mode == "paper":
             dialog = QMessageBox.warning(self, "警告", "确定要删除此题吗？", QMessageBox.Yes | QMessageBox.No)
             if dialog == QMessageBox.Yes:
                 self.paper.questions.pop(self.index)
                 self.onPrevious()
 
+        elif self.mode == "mark":
+            score: str = self.ui.input_message.toPlainText()
+            if score.isdigit():
+                self.score_list[self.index] = int(score)
+            else:
+                QMessageBox.warning(self, "错误", "请对打分的题目输入一个整数！")
+            if self.index == len(self.score_list) - 1:  # 如果已经打完最后一题
+                # TODO 上传分数
+                pass
+
     def onEdit(self) -> None:
-        self.ui.input_message.setEnabled(not self.ui.input_message.isEnabled())
-        if self.ui.button_send.text() == "发送":
-            self.ui.button_send.setText("删除")
-        else:
-            # 先修改本题分数
-            score = QInputDialog.getInt(self, "修改分数", "请输入本题分数", self.question.score, 0, 2147483647, 1)
-            self.paper.questions[self.index].score = score[0]
-            self.onRender()
-            self.ui.button_send.setText("发送")
+        if self.mode == "paper":
+            self.ui.input_message.setEnabled(not self.ui.input_message.isEnabled())
+            if self.ui.button_send.text() == "发送":
+                self.ui.button_send.setText("删除")
+            else:
+                # 先修改本题分数
+                score = QInputDialog.getInt(self, "修改分数", "请输入本题分数", self.paper.questions[self.index].score, 0, 2147483647, 1)
+                self.paper.questions[self.index].score = score[0]
+                self.onRender()
+                self.ui.button_send.setText("发送")
+        else:  # 编辑考试模式
+            file_path = QFileDialog.getOpenFileName(self, "选择考试文件", "exams/", "Latexam 考试文件 (*.lep)")[0]
+            if not file_path:
+                self.mode = ""
+                return
+            with open(file_path, "r", encoding="utf-8") as file:
+                self.exam.paper = Paper.parse_raw(file.read())
+            file_path = QFileDialog.getOpenFileName(self, "选择考试考生表格文件", "exams/", "Excel 文件 (*.xlsx)")[0]
+            if not file_path:
+                self.mode = ""
+                return
+            # TODO 读取考生表格，将处理完的考生列表存入self.exam.student_list
+            self.exam.title = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试标题")[0]
+            self.exam.serial_number = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试序列号")[0]
+            self.exam.start_time = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试开始的时间戳")[0]
+            self.exam.end_time = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试结束的时间戳")[0]
+
+            request = self.client.post(f"{self.address}/api/v1/set_exam", json=self.exam.json())
+            if request.status_code == 200:
+                QMessageBox.information(self, "成功", "考试上传成功！")
+            else:
+                QMessageBox.warning(self, "失败", f"考试上传失败，服务器返回了错误：{request.json()['detail']}")
 
     def onObjective(self) -> None:
         self.ui.button_previous.setEnabled(True)
@@ -386,7 +524,17 @@ class LoginApplication(QMainWindow):
         # 判断传入IP地址:端口是否合法（IP地址包括IPv4和IPv6形式也包括域名）
         # address格式：[<IPV6地址>]:<外部端口> <IPV4地址>:<外部端口> <域名>:<外部端口>
         self.setWindowTitle("Latexam - 正在连接服务器……")
-        if (address := self.ui.input_server.text()) and (password := self.ui.input_password.text()):
+        if (final_address := self.ui.input_server.text()) and (password := self.ui.input_password.text()):
+            if final_address.startswith("http://"):
+                address = final_address[7:]
+            elif final_address.startswith("https://"):
+                address = final_address[8:]
+            else:
+                address = final_address
+                QMessageBox.warning(self, "Latexam - 警告", "服务器地址应当以http(s)://开头，"
+                                                            "已自动添加http://，\n"
+                                                            "按 OK 键继续。")
+                final_address = "http://" + final_address
             if address.count(":") > 1:  # IPv6
                 try:
                     ipaddress.IPv6Address(address[: address.rfind(":")].strip("[]"))
@@ -409,7 +557,7 @@ class LoginApplication(QMainWindow):
 
             password = hashlib.sha256(password.encode()).hexdigest()
 
-            self.parent_window.address = address
+            self.parent_window.address = final_address
             self.parent_window.password = password
             self.parent_window.onConnect()
             self.close()
