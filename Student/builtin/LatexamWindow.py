@@ -636,7 +636,8 @@ class Ui_LatexamWindow(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.output_status = QTreeWidget(self.centralwidget)
         self.output_status.headerItem().setText(0, "")
-        QTreeWidgetItem(self.output_status)
+        __qtreewidgetitem = QTreeWidgetItem(self.output_status)
+        QTreeWidgetItem(__qtreewidgetitem)
         QTreeWidgetItem(self.output_status)
         QTreeWidgetItem(self.output_status)
         self.output_status.setObjectName(u"output_status")
@@ -772,10 +773,12 @@ class Ui_LatexamWindow(object):
         self.output_status.setSortingEnabled(False)
         ___qtreewidgetitem = self.output_status.topLevelItem(0)
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("LatexamWindow", u"\u5f53\u524d\u65f6\u95f4", None));
-        ___qtreewidgetitem1 = self.output_status.topLevelItem(1)
-        ___qtreewidgetitem1.setText(0, QCoreApplication.translate("LatexamWindow", u"\u8003\u8bd5\u4fe1\u606f", None));
-        ___qtreewidgetitem2 = self.output_status.topLevelItem(2)
-        ___qtreewidgetitem2.setText(0, QCoreApplication.translate("LatexamWindow", u"\u8bd5\u5377\u4fe1\u606f", None));
+        ___qtreewidgetitem1 = ___qtreewidgetitem.child(0)
+        ___qtreewidgetitem1.setText(0, QCoreApplication.translate("LatexamWindow", u"00:00:00", None));
+        ___qtreewidgetitem2 = self.output_status.topLevelItem(1)
+        ___qtreewidgetitem2.setText(0, QCoreApplication.translate("LatexamWindow", u"\u8003\u8bd5\u4fe1\u606f", None));
+        ___qtreewidgetitem3 = self.output_status.topLevelItem(2)
+        ___qtreewidgetitem3.setText(0, QCoreApplication.translate("LatexamWindow", u"\u8bd5\u5377\u4fe1\u606f", None));
         self.output_status.setSortingEnabled(__sortingEnabled)
 
         self.output_message.setHtml(QCoreApplication.translate("LatexamWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"

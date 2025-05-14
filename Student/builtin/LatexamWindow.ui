@@ -620,6 +620,11 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
          <property name="text">
           <string>当前时间</string>
          </property>
+         <item>
+          <property name="text">
+           <string>00:00:00</string>
+          </property>
+         </item>
         </item>
         <item>
          <property name="text">
