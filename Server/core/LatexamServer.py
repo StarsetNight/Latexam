@@ -1,6 +1,6 @@
 from pathlib import Path
 from uuid import uuid4
-import datetime
+import hashlib
 import asyncio
 
 from aiosqlite import connect, Connection, Cursor
@@ -23,7 +23,7 @@ async def init_student_database(exists: bool, path: Path):
 
 
 class LatexamServer:
-    def __init__(self, exam: Exam | None = None):
+    def __init__(self, exam: Exam | None = None, admin_password: str = "admin"):
         STUDENT_DATABASE = Path("./database/Student.db")
         student = STUDENT_DATABASE
         exists = student.exists()
@@ -34,6 +34,7 @@ class LatexamServer:
         self.app = FastAPI(title="Latexam-Server")
         self.student_list: list[Student] = []
         self.salt: str = uuid4().hex
+        self.admin_password: str = hashlib.sha256(admin_password.encode("utf-8")).hexdigest()
 
     def run(self, host: str = "0.0.0.0", port: int = 8080):
         run(self.app, host=host, port=port)

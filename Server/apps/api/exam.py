@@ -15,4 +15,10 @@ async def _(token: StudentToken = Depends(verify_student), exam: Exam = Depends(
 
 @exam_api.post("/set_exam")
 async def _(exam: Exam, token: AdminToken = Depends(verify_admin)):
-    pass
+    server.exam = exam
+
+
+@exam_api.get("/get_answer_sheet")
+async def _(token: StudentToken = Depends(verify_student)):
+    student = token.student
+    return AnswerSheet(student=student, exam_id=server.exam.uuid, answers=[])
