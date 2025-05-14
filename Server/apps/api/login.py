@@ -29,4 +29,4 @@ async def _(login: LoginData, res: Response, exam: Exam = Depends(verify_exam_st
 
 @login_api.post("/admin_login")
 async def _(login: LoginData, res: Response):
-    pass
+
