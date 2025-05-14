@@ -30,7 +30,7 @@ class LatexamServer:
         student_cur, student_conn = asyncio.run(init_student_database(exists, student))
         self.student_conn: Connection = student_conn
         self.student_cur: Cursor = student_cur
-        self.exam: Exam | None = Exam(paper=Paper(serial_number=11,title="w", questions=[Question(title="1", type="1", score=1)]), start_time=datetime.now(), end_time=datetime.now(), student_list=[Student(uid=11, nickname="张三", password="asd")], title="测试")
+        self.exam: Exam | None = exam
         self.app = FastAPI(title="Latexam-Server")
         self.student_list: list[Student] = []
         self.salt: str = uuid4().hex

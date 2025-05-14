@@ -643,7 +643,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
            </size>
           </property>
           <property name="echoMode">
-           <enum>QLineEdit::EchoMode::Password</enum>
+           <enum>QLineEdit::EchoMode::Normal</enum>
           </property>
          </widget>
         </item>
