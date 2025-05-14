@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="latexam">
+    <file>Latexam.ico</file>
+    <file>Latexam.png</file>
+  </qresource>
+</RCC>
