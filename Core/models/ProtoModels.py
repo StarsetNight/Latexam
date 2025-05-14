@@ -14,7 +14,7 @@ class BaseData(BaseModel):
     time: int = datetime.now().timestamp()
 
 
-class StudentLogin(BaseData):
+class LoginData(BaseData):
     uid: int
     password: str
 
@@ -29,3 +29,12 @@ class Results(BaseModel):
 class LoginResults(Results):
     success: bool
     data: None | Student = None
+
+
+class StudentToken(BaseModel):
+    student: Student
+    exam_id: str
+    token: str
+
+class AdminToken(BaseModel):
+    token: str

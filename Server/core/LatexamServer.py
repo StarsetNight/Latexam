@@ -1,4 +1,6 @@
 from pathlib import Path
+from uuid import uuid4
+import datetime
 import asyncio
 
 from aiosqlite import connect, Connection, Cursor
@@ -28,9 +30,10 @@ class LatexamServer:
         student_cur, student_conn = asyncio.run(init_student_database(exists, student))
         self.student_conn: Connection = student_conn
         self.student_cur: Cursor = student_cur
-        self.exam: Exam | None = exam
+        self.exam: Exam | None = Exam(paper=Paper(serial_number=11,title="w", questions=[Question(title="1", type="1", score=1)]), start_time=datetime.now(), end_time=datetime.now(), student_list=[Student(uid=11, nickname="张三", password="asd")], title="测试")
         self.app = FastAPI(title="Latexam-Server")
         self.student_list: list[Student] = []
+        self.salt: str = uuid4().hex
 
     def run(self, host: str = "0.0.0.0", port: int = 8080):
         run(self.app, host=host, port=port)

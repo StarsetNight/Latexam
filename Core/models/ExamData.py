@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import uuid1
 
 from Core.models.BaseModel import BaseModel
 
@@ -54,9 +55,10 @@ class Exam(BaseModel):
     start_time: datetime  # 开始时间
     end_time: datetime  # 结束时间
     student_list: list[Student]  # 考试人员列表
+    uuid: str = uuid1().hex
 
 
 class AnswerSheet(BaseModel):
     student: Student
-    exam: Exam
+    exam_id: str
     answers: list[str]
