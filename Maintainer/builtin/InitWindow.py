@@ -24,6 +24,7 @@ from .LatexamWindow import Ui_LatexamWindow
 from .LoginDialog import Ui_LoginWindow
 
 from Core.models import *
+from Core.Tools import *
 
 VERSION = "v1.0.0 Alpha"
 
@@ -120,7 +121,7 @@ class LatexamApplication(QMainWindow):
         :return: 成功返回True，否则返回False
         """
         self.client = httpx.Client()
-        response = LoginResults.parse_obj(self.client.post(f"{self.address}/api/v1/login",
+        response = LoginResults.parse_obj(self.client.post(f"{self.address}/api/v1/admin_login",
                                                            json=LoginData(uid=0, password=self.password)
                                                            .dict()).json())
         if response.success:
@@ -217,9 +218,9 @@ class LatexamApplication(QMainWindow):
 
         self.mode = "exam"
         exam_data = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info").json())
-        self.signal.set_output_box.emit(f"<h2>{exam_data.data.title}</h2>"
-                                        f"<p><font color='grey'>开始时间：{exam_data.data.start_time}</font></p>"
-                                        f"<p><font color='grey'>结束时间：{exam_data.data.end_time}</font></p>")
+        self.signal.set_output_box.emit(f"<h2>{exam_data.title}</h2>"
+                                        f"<p><font color='grey'>开始时间：{exam_data.start_time}</font></p>"
+                                        f"<p><font color='grey'>结束时间：{exam_data.end_time}</font></p>")
 
     def onMarkExam(self) -> None:
         if not self.online:
@@ -246,7 +247,7 @@ class LatexamApplication(QMainWindow):
         # 先获取考试信息
         self.exam = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info").json())
 
-        # TODO 从服务端获取答题卡
+        self.sheet = AnswerSheet.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_answer_sheet").json())
 
         self.score_list = [0] * len(self.sheet.answers)
 
@@ -302,7 +303,6 @@ class LatexamApplication(QMainWindow):
                 self.ui.button_next.setEnabled(True)
                 self.ui.button_send.setEnabled(False)
                 self.signal.clear_input_box.emit()
-                exam_data = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info").json())
                 self.signal.set_output_box.emit(f"<h2>{self.exam.title}</h2>"
                                                 f"<p><font color='grey'>序列号：{self.exam.uuid}"
                                                 f"</font></p>"
@@ -442,7 +442,11 @@ class LatexamApplication(QMainWindow):
                 QMessageBox.warning(self, "错误", "请对打分的题目输入一个整数！")
             if self.index == len(self.score_list) - 1:  # 如果已经打完最后一题
                 # TODO 上传分数
-                pass
+                request = self.client.post(f"{self.address}/api/v1/upload_score", json=self.exam.json())
+                if request.status_code == 200:
+                    QMessageBox.information(self, "成功", f"考生 {self.sheet.student.uid} 的分数上传成功！")
+                else:
+                    QMessageBox.warning(self, "失败", f"分数上传失败，服务器返回了错误：{request.json()['detail']}")
 
     def onEdit(self) -> None:
         if self.mode == "paper":
@@ -466,7 +470,7 @@ class LatexamApplication(QMainWindow):
             if not file_path:
                 self.mode = ""
                 return
-            # TODO 读取考生表格，将处理完的考生列表存入self.exam.student_list
+            self.exam.student_list = excel_to_students(Path(file_path))
             self.exam.title = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试标题")[0]
             self.exam.serial_number = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试序列号")[0]
             self.exam.start_time = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试开始的时间戳")[0]
