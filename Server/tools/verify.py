@@ -25,11 +25,8 @@ def verify_student(token: str = Cookie(...), exam: Exam = Depends(verify_exam_st
     return student
 
 
-def verify_admin(token: str = Cookie(...)) -> Student:
+def verify_admin(token: str = Cookie(...)):
     data = b64decode(token).decode("utf-8")
-    data = Student.parse_raw(data)
-    if data.uid != 0:
-        raise HTTPException(status_code=401, detail="你没有权限")
-    return data
+    data = AdminToken.parse_raw(data)
 
 

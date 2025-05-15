@@ -40,6 +40,10 @@ class LatexamSignal(QObject):
 class LatexamApplication(QMainWindow):
     child_window: QWidget
 
+    start_timer: threading.Timer
+    end_timer: threading.Timer
+    time_thread: threading.Thread
+
     client: httpx.Client
     address: str = ""
     username: str = ""
@@ -70,7 +74,8 @@ class LatexamApplication(QMainWindow):
         if not os.path.exists("papers/"):
             os.mkdir("papers")
 
-        threading.Thread(target=self.threadTime).start()
+        self.time_thread = threading.Thread(target=self.threadTime)
+        self.time_thread.start()
 
     def bind(self):
         self.signal.set_input_box.connect(self.ui.input_message.setPlainText)
@@ -85,6 +90,7 @@ class LatexamApplication(QMainWindow):
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if dialog == QMessageBox.Yes:
             event.accept()
+            self.deleteLater()
         else:
             event.ignore()
 
@@ -156,7 +162,10 @@ class LatexamApplication(QMainWindow):
                                  exam_id=self.exam.uuid,
                                  answers=[""] * len(self.paper.questions))
         self.ui.output_status.topLevelItem(2).addChild(QTreeWidgetItem([f"试卷标题：{self.paper.title}"]))
-        threading.Timer((self.exam.start_time - datetime.now()).total_seconds(), self.startExam).start()
+        self.start_timer = threading.Timer((self.exam.start_time - datetime.now()).total_seconds(), self.startExam)
+        self.end_timer = threading.Timer((self.exam.end_time - datetime.now()).total_seconds(), self.endExam)
+        self.start_timer.start()
+        self.end_timer.start()
 
     def onDisconnect(self) -> None:
         """
@@ -175,6 +184,12 @@ class LatexamApplication(QMainWindow):
             self.username = ""
             self.number = ""
             self.password = ""
+            self.ui.button_next.setEnabled(False)
+            self.ui.button_previous.setEnabled(False)
+            self.ui.button_answer.setEnabled(False)
+            self.ui.input_message.setEnabled(False)
+            self.start_timer.cancel()
+            self.end_timer.cancel()
 
     def onExit(self) -> None:
         self.close()
@@ -251,11 +266,29 @@ class LatexamApplication(QMainWindow):
         self.ui.button_previous.setEnabled(False)
         self.ui.input_message.setEnabled(True)
 
-    # TODO 考试结束需要停止答题，上传答题卡
+    def endExam(self) -> None:
+        self.onAnswer()  # 保存未保存更改
+        self.ui.button_answer.setEnabled(False)
+        self.ui.button_next.setEnabled(False)
+        self.ui.button_previous.setEnabled(False)
+        self.ui.input_message.setEnabled(False)
+        QMessageBox.information(self, "Latexam - 提示", "考试结束，请停止答题！\n"
+                                                        "请按 OK 键以开始上传答题卡。")
+        request = self.client.post(f"{self.address}/api/v1/upload_sheet", json=self.sheet.json())
+        if request.status_code == 200:
+            QMessageBox.information(self, "Latexam - 成功", f"考生 {self.sheet.student.uid} 的答题卡上传成功！")
+        else:
+            with open(os.path.join(os.getcwd(), "papers", f"{self.number}.les"), "w+") as file:
+                file.write(self.sheet.json())
+            QMessageBox.warning(self, "Latexam - 失败", f"答题卡上传失败，服务器返回了错误：{request.json()['detail']}\n"
+                                                        f"请与考场教师取得联系！相关文件已保存在客户端文件夹/papers/{self.number}.les中")
 
     def threadTime(self) -> None:
         while 1:
             self.ui.output_status.topLevelItem(0).child(0).setText(0, str(datetime.now().strftime("%H:%M:%S")))
+            if datetime.now().second == 0 and self.online:  # 每分钟保存一次答题卡
+                with open(os.path.join(os.getcwd(), "papers", f"{self.number}.les"), "w+") as file:
+                    file.write(self.sheet.json())
             time.sleep(1)
 
     def onStatusClicked(self, item: QTreeWidgetItem) -> None:
