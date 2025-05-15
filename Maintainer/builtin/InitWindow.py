@@ -247,7 +247,10 @@ class LatexamApplication(QMainWindow):
         # 先获取考试信息
         self.exam = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info").json())
 
-        self.sheet = AnswerSheet.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_answer_sheet").json())
+        self.sheet = AnswerSheet.parse_obj(self.client.get(
+            url=f"{self.address}/api/v1/exam/get_student_answer",
+            params={"student_id": number}
+        ).json())
 
         self.score_list = [0] * len(self.sheet.answers)
 
