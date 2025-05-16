@@ -766,6 +766,7 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
   <tabstop>input_server</tabstop>
   <tabstop>input_name</tabstop>
   <tabstop>input_number</tabstop>
+  <tabstop>input_password</tabstop>
   <tabstop>key_login</tabstop>
   <tabstop>key_cancel</tabstop>
  </tabstops>

@@ -4,6 +4,7 @@ import socket
 import ujson as json
 import hashlib
 import httpx
+import time
 from subprocess import run
 
 from PySide6.QtCore import Signal, QObject
@@ -217,10 +218,23 @@ class LatexamApplication(QMainWindow):
         self.ui.button_edit.setEnabled(True)
 
         self.mode = "exam"
-        exam_data = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info").json())
-        self.signal.set_output_box.emit(f"<h2>{exam_data.title}</h2>"
-                                        f"<p><font color='grey'>开始时间：{exam_data.start_time}</font></p>"
-                                        f"<p><font color='grey'>结束时间：{exam_data.end_time}</font></p>")
+        request = self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info")
+        if request.status_code == 200:
+            exam_data = Exam.parse_obj(request.json())
+            self.signal.set_output_box.emit(f"<h2>{exam_data.title}</h2>"
+                                            f"<p><font color='grey'>开始时间：{exam_data.start_time}</font></p>"
+                                            f"<p><font color='grey'>结束时间：{exam_data.end_time}</font></p>")
+            self.exam = exam_data
+        else:
+            self.signal.set_output_box.emit(f"<h2>考试未设置</h2>"
+                                            f"<p>请点击 <font color='blue'>编辑</font> 来设置考试。</p>")
+            self.exam = Exam(
+                title="考试未设置",
+                start_time=datetime.now(),
+                end_time=datetime.now(),
+                student_list=[],
+                paper=Paper(serial_number=0, title="", questions=[])
+            )
 
     def onMarkExam(self) -> None:
         if not self.online:
@@ -445,7 +459,9 @@ class LatexamApplication(QMainWindow):
                 QMessageBox.warning(self, "错误", "请对打分的题目输入一个整数！")
             if self.index == len(self.score_list) - 1:  # 如果已经打完最后一题
                 # TODO 上传分数
-                request = self.client.post(f"{self.address}/api/v1/upload_score", json=self.exam.json())
+                request = self.client.post(f"{self.address}/api/v1/upload_score",
+                                           json=ScoreData(uid=self.sheet.student.uid,
+                                                          score=sum(self.score_list)).json())
                 if request.status_code == 200:
                     QMessageBox.information(self, "成功", f"考生 {self.sheet.student.uid} 的分数上传成功！")
                 else:
@@ -475,9 +491,11 @@ class LatexamApplication(QMainWindow):
                 return
             self.exam.student_list = excel_to_students(Path(file_path))
             self.exam.title = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试标题")[0]
-            self.exam.serial_number = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试序列号")[0]
-            self.exam.start_time = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试开始的时间戳")[0]
-            self.exam.end_time = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试结束的时间戳")[0]
+            self.exam.start_time = datetime.fromtimestamp(QInputDialog.getInt(self, "Latexam - 编辑考试", "请输入考试开始的时间戳",
+                                                                              value=int(time.time()))[0])
+            self.exam.end_time = datetime.fromtimestamp(QInputDialog.getInt(self, "Latexam - 编辑考试", "请输入考试结束的时间戳",
+                                                                            value=int(time.time()))[0])
+            print(self.exam.json())
 
             request = self.client.post(f"{self.address}/api/v1/set_exam", json=self.exam.json())
             if request.status_code == 200:

@@ -742,8 +742,11 @@ class Ui_LatexamWindow(object):
         self.menu_about = QMenu(self.menubar)
         self.menu_about.setObjectName(u"menu_about")
         LatexamWindow.setMenuBar(self.menubar)
-        QWidget.setTabOrder(self.input_message, self.output_message)
-        QWidget.setTabOrder(self.output_message, self.output_status)
+        QWidget.setTabOrder(self.output_status, self.output_message)
+        QWidget.setTabOrder(self.output_message, self.input_message)
+        QWidget.setTabOrder(self.input_message, self.button_previous)
+        QWidget.setTabOrder(self.button_previous, self.button_next)
+        QWidget.setTabOrder(self.button_next, self.button_answer)
 
         self.menubar.addAction(self.menu_session.menuAction())
         self.menubar.addAction(self.menu_about.menuAction())

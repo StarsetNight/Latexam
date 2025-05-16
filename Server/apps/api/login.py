@@ -1,7 +1,7 @@
 from hmac import compare_digest
 from hashlib import sha256
 from base64 import b64encode
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import Response, Depends
 from fastapi import APIRouter
@@ -35,5 +35,5 @@ async def _(login: LoginData, res: Response):
     if not compare_digest(server.admin_password, login.password):
         return LoginResults(success=False, msg="密码错误")
     cookie = AdminToken(token=sha256(f"{server.admin_password}{server.salt}".encode("utf-8")).hexdigest())
-    res.set_cookie("token", b64encode(cookie.json().encode("utf-8")).decode("utf-8"), expires=datetime.utcnow()+timedelta(days=10))
+    res.set_cookie("token", b64encode(cookie.json().encode("utf-8")).decode("utf-8"), expires=datetime.now(timezone.utc)+timedelta(days=10))
     return LoginResults(success=True, data=Student(uid=0, password=server.admin_password, nickname="admin"))
