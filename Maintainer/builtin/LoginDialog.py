@@ -629,7 +629,7 @@ class Ui_LoginWindow(object):
         self.input_password = QLineEdit(self.centralwidget)
         self.input_password.setObjectName(u"input_password")
         self.input_password.setMinimumSize(QSize(0, 25))
-        self.input_password.setEchoMode(QLineEdit.Password)
+        self.input_password.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.gridLayout.addWidget(self.input_password, 1, 1, 1, 1)
 
@@ -641,7 +641,7 @@ class Ui_LoginWindow(object):
         self.label_password = QLabel(self.centralwidget)
         self.label_password.setObjectName(u"label_password")
 
-        self.gridLayout.addWidget(self.label_password, 1, 0, 1, 1, Qt.AlignHCenter)
+        self.gridLayout.addWidget(self.label_password, 1, 0, 1, 1, Qt.AlignmentFlag.AlignHCenter)
 
         self.input_server = QLineEdit(self.centralwidget)
         self.input_server.setObjectName(u"input_server")
@@ -693,13 +693,15 @@ class Ui_LoginWindow(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
 
         LoginWindow.setCentralWidget(self.centralwidget)
-        QWidget.setTabOrder(self.input_server, self.key_login)
+        QWidget.setTabOrder(self.input_server, self.input_password)
+        QWidget.setTabOrder(self.input_password, self.key_login)
         QWidget.setTabOrder(self.key_login, self.key_cancel)
 
         self.retranslateUi(LoginWindow)
         self.key_login.clicked.connect(LoginWindow.onLogin)
         self.key_cancel.clicked.connect(LoginWindow.close)
         self.key_cancel.clicked.connect(LoginWindow.deleteLater)
+        self.input_password.returnPressed.connect(self.key_login.click)
 
         QMetaObject.connectSlotsByName(LoginWindow)
     # setupUi

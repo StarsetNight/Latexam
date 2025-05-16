@@ -4,6 +4,9 @@ import socket
 import ujson as json
 import hashlib
 import httpx
+import time
+from datetime import timezone
+from tzlocal import get_localzone
 from subprocess import run
 
 from PySide6.QtCore import Signal, QObject
@@ -27,6 +30,7 @@ from Core.models import *
 from Core.Tools import *
 
 VERSION = "v1.0.0 Alpha"
+local_timezone = get_localzone()
 
 
 class LatexamSignal(QObject):
@@ -72,6 +76,11 @@ class LatexamApplication(QMainWindow):
         # 如果papers文件夹不存在，则创建
         if not os.path.exists("papers/"):
             os.mkdir("papers")
+
+        # FIXME 测试用
+        self.address = "http://127.0.0.1:8080"
+        self.password = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+        self.onConnect()
 
     def bind(self):
         self.signal.set_input_box.connect(self.ui.input_message.setPlainText)
@@ -217,10 +226,23 @@ class LatexamApplication(QMainWindow):
         self.ui.button_edit.setEnabled(True)
 
         self.mode = "exam"
-        exam_data = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info").json())
-        self.signal.set_output_box.emit(f"<h2>{exam_data.title}</h2>"
-                                        f"<p><font color='grey'>开始时间：{exam_data.start_time}</font></p>"
-                                        f"<p><font color='grey'>结束时间：{exam_data.end_time}</font></p>")
+        request = self.client.get(url=f"{self.address}/api/v1/get_exam_info")
+        if request.status_code == 200:
+            exam_data = Exam.parse_obj(request.json()["data"])
+            self.signal.set_output_box.emit(f"<h2>{exam_data.title}</h2>"
+                                            f"<p><font color='grey'>开始时间：{exam_data.start_time.astimezone(local_timezone)}</font></p>"
+                                            f"<p><font color='grey'>结束时间：{exam_data.end_time.astimezone(local_timezone)}</font></p>")
+            self.exam = exam_data
+        else:
+            self.signal.set_output_box.emit(f"<h2>考试未设置</h2>"
+                                            f"<p>请点击 <font color='blue'>编辑</font> 来设置考试。</p>")
+            self.exam = Exam(
+                title="考试未设置",
+                start_time=datetime.now(tz=timezone.utc),
+                end_time=datetime.now(tz=timezone.utc),
+                student_list=[],
+                paper=Paper(serial_number=0, title="", questions=[])
+            )
 
     def onMarkExam(self) -> None:
         if not self.online:
@@ -245,12 +267,19 @@ class LatexamApplication(QMainWindow):
         self.mode = "mark"
 
         # 先获取考试信息
-        self.exam = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/exam/get_exam_info").json())
+        self.exam = Exam.parse_obj(self.client.get(url=f"{self.address}/api/v1/get_exam_info").json()["data"])
 
-        self.sheet = AnswerSheet.parse_obj(self.client.get(
-            url=f"{self.address}/api/v1/exam/get_student_answer",
-            params={"student_id": number}
-        ).json())
+        request = self.client.get(
+            url=f"{self.address}/api/v1/get_student_sheet",
+            params={"student_uid": number}
+        )
+        self.sheet = AnswerSheet.parse_obj(request.json()["data"])
+
+        self.signal.set_output_box.emit(f"<h2>{self.exam.title}</h2>"
+                                        f"<h3>{self.sheet.student.nickname}（{self.sheet.student.uid}） 的答题卡</h3>"
+                                        f"<p><font color='grey'>总分：{sum([question.score for question in self.exam.paper.questions])}</font></p>"
+                                        f"<p>点击 <font color='blue'>下一题</font> 以开始批卷。</p>")
+        self.ui.button_next.setEnabled(True)
 
         self.score_list = [0] * len(self.sheet.answers)
 
@@ -291,6 +320,7 @@ class LatexamApplication(QMainWindow):
             self.ui.button_edit.setEnabled(False)
             self.ui.button_objective.setEnabled(False)
             self.ui.button_subjective.setEnabled(False)
+            self.ui.button_send.setText("发送")
             if self.index != len(self.sheet.answers) - 1:  # 如果不是最后一题
                 self.ui.button_next.setEnabled(True)
             if self.index != -1:  # 如果不是首页
@@ -298,7 +328,7 @@ class LatexamApplication(QMainWindow):
                 self.ui.button_previous.setEnabled(True)
                 self.ui.button_send.setEnabled(True)
                 self.onRender()
-                self.signal.set_input_box.emit(self.score_list[self.index])
+                self.signal.set_input_box.emit(str(self.score_list[self.index]))
                 self.ui.text_status.setText("阅卷打分")
             else:
                 self.ui.text_status.setText("首页")
@@ -341,10 +371,12 @@ class LatexamApplication(QMainWindow):
             self.ui.button_send.setEnabled(True)
             if self.index != len(self.sheet.answers) - 1:  # 如果不是最后一题
                 self.ui.button_next.setEnabled(True)
+                self.ui.button_send.setText("发送")
             else:
                 self.ui.button_next.setEnabled(False)
+                self.ui.button_send.setText("提交")
             self.onRender()
-            self.signal.set_input_box.emit(self.score_list[self.index])
+            self.signal.set_input_box.emit(str(self.score_list[self.index]))
             self.ui.text_status.setText("阅卷打分")
 
     def onRender(self) -> None:
@@ -368,10 +400,12 @@ class LatexamApplication(QMainWindow):
                                                    f"{self.paper.questions[self.index].judgement_reference}</font></p>")
         else:
             if self.exam.paper.questions[self.index].type == "objective":
+                self.ui.input_message.setEnabled(False)
                 self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题"
                                                 f"{self.exam.paper.questions[self.index].score}分）</p>"
                                                 f"<p>本题为客观题，无需阅卷，请批阅其他题目。</p>")
             else:
+                self.ui.input_message.setEnabled(True)
                 self.signal.set_output_box.emit(f"<p>（{self.index + 1}）（本小题"
                                                 f"{self.exam.paper.questions[self.index].score}分）</p>"
                                                 f"<p>{self.sheet.answers[self.index]}</p>")
@@ -444,8 +478,9 @@ class LatexamApplication(QMainWindow):
             else:
                 QMessageBox.warning(self, "错误", "请对打分的题目输入一个整数！")
             if self.index == len(self.score_list) - 1:  # 如果已经打完最后一题
-                # TODO 上传分数
-                request = self.client.post(f"{self.address}/api/v1/upload_score", json=self.exam.json())
+                request = self.client.post(f"{self.address}/api/v1/upload_score",
+                                            content=ScoreData(uid=self.sheet.student.uid,
+                                                          score=sum(self.score_list)).json())
                 if request.status_code == 200:
                     QMessageBox.information(self, "成功", f"考生 {self.sheet.student.uid} 的分数上传成功！")
                 else:
@@ -475,13 +510,15 @@ class LatexamApplication(QMainWindow):
                 return
             self.exam.student_list = excel_to_students(Path(file_path))
             self.exam.title = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试标题")[0]
-            self.exam.serial_number = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试序列号")[0]
-            self.exam.start_time = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试开始的时间戳")[0]
-            self.exam.end_time = QInputDialog.getText(self, "Latexam - 编辑考试", "请输入考试结束的时间戳")[0]
+            self.exam.start_time = datetime.fromtimestamp(QInputDialog.getInt(self, "Latexam - 编辑考试", "请输入考试开始的时间戳",
+                                                                              value=int(time.time()))[0])
+            self.exam.end_time = datetime.fromtimestamp(QInputDialog.getInt(self, "Latexam - 编辑考试", "请输入考试结束的时间戳",
+                                                                            value=int(time.time()))[0])
 
-            request = self.client.post(f"{self.address}/api/v1/set_exam", json=self.exam.json())
+            request = self.client.post(f"{self.address}/api/v1/set_exam", content=self.exam.json())
             if request.status_code == 200:
                 QMessageBox.information(self, "成功", "考试上传成功！")
+                self.onEditExam()
             else:
                 QMessageBox.warning(self, "失败", f"考试上传失败，服务器返回了错误：{request.json()['detail']}")
 

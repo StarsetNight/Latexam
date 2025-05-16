@@ -855,9 +855,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
   </action>
  </widget>
  <tabstops>
-  <tabstop>input_message</tabstop>
-  <tabstop>output_message</tabstop>
   <tabstop>output_status</tabstop>
+  <tabstop>output_message</tabstop>
+  <tabstop>input_message</tabstop>
+  <tabstop>button_previous</tabstop>
+  <tabstop>button_next</tabstop>
+  <tabstop>button_answer</tabstop>
  </tabstops>
  <resources>
   <include location="Latexam.qrc"/>

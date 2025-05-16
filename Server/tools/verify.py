@@ -25,8 +25,11 @@ def verify_student(token: str = Cookie(...), exam: Exam = Depends(verify_exam_st
     return student
 
 
-def verify_admin(token: str = Cookie(...)):
+def verify_admin(token: str = Cookie(...)) -> bool:
     data = b64decode(token).decode("utf-8")
     data = AdminToken.parse_raw(data)
+    if not compare_digest(sha256(f"{server.admin_password}{server.salt}".encode("utf-8")).hexdigest(), data.token):
+        raise HTTPException(status_code=401, detail="cookie无效")
+    return True
 
 
