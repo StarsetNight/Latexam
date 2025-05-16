@@ -19,11 +19,15 @@ class LoginData(BaseData):
     password: str
 
 
+class ScoreData(BaseData):
+    score: int
+
+
 class Results(BaseModel):
     recode: int = 200
     error: str = None
     msg: str = None
-    data: Any = None
+    data: Any
 
 
 class LoginResults(Results):
@@ -31,10 +35,15 @@ class LoginResults(Results):
     data: None | Student = None
 
 
+class ScoreResult(Results):
+    score: int
+
+
 class StudentToken(BaseModel):
     student: Student
     exam_id: str
     token: str
+
 
 class AdminToken(BaseModel):
     token: str
