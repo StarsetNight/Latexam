@@ -9,7 +9,7 @@ exam_api = APIRouter(prefix="")
 
 
 @exam_api.get("/get_exam_info")
-async def _(token: StudentToken = Depends(verify_student), exam: Exam = Depends(verify_exam_status)):
+async def _(exam: Exam = Depends(verify_exam_status)):
     return Results(msg="查询成功！", data=exam)
 
 
@@ -26,6 +26,13 @@ async def _(token: StudentToken = Depends(verify_student)):
 
 @exam_api.get("/get_student_sheet")
 async def _(student_uid: int, token = Depends(verify_admin)):
+    if student_uid not in server.get_sheet_uids():
+        return Results(recode=401, msg="没有相应的答题卡")
+    return Results(msg="查询成功！", data=server.get_student_sheet(student_uid))
+
+
+@exam_api.get("/get_student_score")
+async def _(student_uid: int, token = Depends(verify_admin)):
     if student_uid not in server.get_score_uids():
         return Results(recode=401, msg="成绩未设定")
     return ScoreResult(recode=200, score=server.get_student_score(student_uid))
@@ -38,11 +45,20 @@ async def _(sheet: AnswerSheet, token: Student = Depends(verify_student)):
     if sheet.student.uid in server.get_sheet_uids():
         return Results(recode=401, msg="禁止重复提交答题卡")
     server.sheets.append(sheet)
+    score = 0
+    for index, question in enumerate(server.exam.paper.questions):
+        if question.type == "objective":
+            if sheet.answers[index] == sorted("".join([option_str_[question.options.index(i)] for i in [i for i in question.options if i.correct]])):
+                score += question.score
+    server.scores[sheet.student.uid] = (score, False)
     return Results(recode=200, msg="成功！")
 
 
 @exam_api.post("/upload_score")
 async def _(data: ScoreData):
-    server.scores[data.uid] = data.score
-    return Results(recode=200, msg="更新成功")
+    if not server.scores[data.uid][1]:
+        server.scores[data.uid] = (server.scores[data.uid][0] + data.score, True)
+        return Results(recode=200, msg="更新成功")
+    else:
+        return Results(recode=401, msg="禁止重复上传成绩")
 

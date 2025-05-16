@@ -36,7 +36,7 @@ class LatexamServer:
         self.salt: str = uuid4().hex
         self.admin_password: str = hashlib.sha256(admin_password.encode("utf-8")).hexdigest()
         self.sheets: list[AnswerSheet] = []
-        self.scores: dict[int, int] = {}    # uid为key，分数为value
+        self.scores: dict[int, tuple[int, bool]] = {}    # uid为key，分数和是否主观题阅卷为value
 
     def run(self, host: str = "0.0.0.0", port: int = 8080):
         run(self.app, host=host, port=port)
@@ -51,4 +51,4 @@ class LatexamServer:
         return [i for i in self.scores.keys()]
 
     def get_student_score(self, student_uid: int) -> int:
-        return self.scores[student_uid]
+        return self.scores[student_uid][0]

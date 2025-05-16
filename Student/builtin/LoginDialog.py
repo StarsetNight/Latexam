@@ -725,11 +725,11 @@ class Ui_LoginWindow(object):
         self.retranslateUi(LoginWindow)
         self.key_login.clicked.connect(LoginWindow.onLogin)
         self.key_cancel.clicked.connect(LoginWindow.close)
+        self.key_cancel.clicked.connect(LoginWindow.deleteLater)
         self.input_server.returnPressed.connect(self.input_name.setFocus)
         self.input_name.returnPressed.connect(self.input_number.setFocus)
-        self.input_number.returnPressed.connect(self.key_login.click)
-        self.key_cancel.clicked.connect(LoginWindow.deleteLater)
         self.input_number.returnPressed.connect(self.input_password.setFocus)
+        self.input_password.returnPressed.connect(self.key_login.click)
 
         QMetaObject.connectSlotsByName(LoginWindow)
     # setupUi

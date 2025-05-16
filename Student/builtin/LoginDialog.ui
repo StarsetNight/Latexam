@@ -807,54 +807,6 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
    </hints>
   </connection>
   <connection>
-   <sender>input_server</sender>
-   <signal>returnPressed()</signal>
-   <receiver>input_name</receiver>
-   <slot>setFocus()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>308</x>
-     <y>64</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>308</x>
-     <y>95</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>input_name</sender>
-   <signal>returnPressed()</signal>
-   <receiver>input_number</receiver>
-   <slot>setFocus()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>308</x>
-     <y>95</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>308</x>
-     <y>126</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>input_number</sender>
-   <signal>returnPressed()</signal>
-   <receiver>key_login</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>308</x>
-     <y>126</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>242</x>
-     <y>228</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>key_cancel</sender>
    <signal>clicked()</signal>
    <receiver>LoginWindow</receiver>
@@ -871,18 +823,66 @@ QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
    </hints>
   </connection>
   <connection>
+   <sender>input_server</sender>
+   <signal>returnPressed()</signal>
+   <receiver>input_name</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>139</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>142</x>
+     <y>75</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>input_name</sender>
+   <signal>returnPressed()</signal>
+   <receiver>input_number</receiver>
+   <slot>setFocus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>119</x>
+     <y>87</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>124</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>input_number</sender>
    <signal>returnPressed()</signal>
    <receiver>input_password</receiver>
    <slot>setFocus()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>109</x>
-     <y>110</y>
+     <x>105</x>
+     <y>114</y>
     </hint>
     <hint type="destinationlabel">
-     <x>114</x>
-     <y>141</y>
+     <x>101</x>
+     <y>145</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>input_password</sender>
+   <signal>returnPressed()</signal>
+   <receiver>key_login</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>88</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>215</x>
+     <y>218</y>
     </hint>
    </hints>
   </connection>

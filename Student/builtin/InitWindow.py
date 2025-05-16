@@ -1,10 +1,13 @@
 import os
+import sys
 import ipaddress
 import socket
 import hashlib
 import httpx
 import time
 import datetime
+from tzlocal import get_localzone
+from datetime import timezone
 import threading
 
 from PySide6.QtCore import Signal, QObject
@@ -27,6 +30,7 @@ from .LoginDialog import Ui_LoginWindow
 from Core.models import *
 
 VERSION = "v1.0.0 Alpha"
+local_timezone = get_localzone()
 
 
 class LatexamSignal(QObject):
@@ -35,6 +39,7 @@ class LatexamSignal(QObject):
     set_output_box = Signal(str)
     append_output_box = Signal(str)
     clear_output_box = Signal()
+    send_dialog = Signal(str)
 
 
 class LatexamApplication(QMainWindow):
@@ -83,6 +88,7 @@ class LatexamApplication(QMainWindow):
         self.signal.set_output_box.connect(self.ui.output_message.setText)
         self.signal.append_output_box.connect(self.ui.output_message.append)
         self.signal.clear_output_box.connect(self.ui.output_message.clear)
+        self.signal.send_dialog.connect(self.sendDialog)
 
     def closeEvent(self, event) -> None:
         dialog = QMessageBox.warning(self, "Latexam - 警告", "你真的要退出Latexam考试系统吗？\n"
@@ -147,23 +153,32 @@ class LatexamApplication(QMainWindow):
             self.password = ""
             return False
 
-        self.exam = Exam.parse_obj(self.client.get(f"{self.address}/api/v1/exam/get_exam_info").json())
+        self.exam = Exam.parse_obj(self.client.get(f"{self.address}/api/v1/get_exam_info").json()["data"])
         self.ui.output_status.topLevelItem(1).addChild(QTreeWidgetItem([f"服务器地址：{self.address}"]))
         self.ui.output_status.topLevelItem(1).addChild(QTreeWidgetItem([f"考生姓名：{self.username}"]))
         self.ui.output_status.topLevelItem(1).addChild(QTreeWidgetItem([f"考生学号：{self.number}"]))
         self.ui.output_status.topLevelItem(1).addChild(QTreeWidgetItem([f"考试名称：{self.exam.title}"]))
-        self.ui.output_status.topLevelItem(1).addChild(QTreeWidgetItem([f"考试编号：{self.exam.uuid}"]))
         duration = self.exam.end_time - self.exam.start_time
         self.ui.output_status.topLevelItem(1).addChild(QTreeWidgetItem([f"考试时长：{duration.total_seconds() // 60} 分钟"]))
         self.ui.output_status.topLevelItem(1).addChild(
-            QTreeWidgetItem([f"考试开始时间：{self.exam.start_time.strftime('%Y-%m-%d %H:%M:%S')}"]))
+            QTreeWidgetItem([f"考试开始时间：{self.exam.start_time.astimezone(local_timezone)}"]))
         self.paper = self.exam.paper
+        self.signal.set_output_box.emit(f"<h2>欢迎您，{self.username}！<h2>"
+                                        f"<h3>您正在参加 {self.exam.title}。<h3>"
+                                        f"<p>试卷标题：{self.paper.title}</p>"
+                                        f"<p>考试时长：{duration.total_seconds() // 60} 分钟</p>"
+                                        f"<p>考试开始时间：{self.exam.start_time.astimezone(local_timezone)}</p>"
+                                        f"<p>考试结束时间：{self.exam.end_time.astimezone(local_timezone)}</p>"
+                                        f"<p>试卷题目数量：{len(self.paper.questions)}</p>"
+                                        f"<p>试卷总分：{sum([question.score for question in self.paper.questions])}</p>"
+                                        f"<p>请等待考试开始，祝您考试顺利！</p>")
+
         self.sheet = AnswerSheet(student=Student(uid=self.number, nickname=self.username, password=""),
                                  exam_id=self.exam.uuid,
                                  answers=[""] * len(self.paper.questions))
         self.ui.output_status.topLevelItem(2).addChild(QTreeWidgetItem([f"试卷标题：{self.paper.title}"]))
-        self.start_timer = threading.Timer((self.exam.start_time - datetime.now()).total_seconds(), self.startExam)
-        self.end_timer = threading.Timer((self.exam.end_time - datetime.now()).total_seconds(), self.endExam)
+        self.start_timer = threading.Timer((self.exam.start_time - datetime.now(tz=timezone.utc)).total_seconds(), self.startExam)
+        self.end_timer = threading.Timer((self.exam.end_time - datetime.now(tz=timezone.utc)).total_seconds(), self.endExam)
         self.start_timer.start()
         self.end_timer.start()
 
@@ -177,7 +192,7 @@ class LatexamApplication(QMainWindow):
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if dialog == QMessageBox.Yes:
             self.setWindowTitle(f"Latexam 考试系统 {VERSION} - 离线")
-            for top_index in range(3):
+            for top_index in range(1, 3):
                 self.ui.output_status.topLevelItem(top_index).takeChildren()
             self.online = False
             self.address = ""
@@ -202,21 +217,27 @@ class LatexamApplication(QMainWindow):
         if self.index != -1:  # 如果不是首页
             self.ui.button_previous.setEnabled(True)
             self.ui.button_answer.setEnabled(True)
+            self.ui.input_message.setEnabled(True)
 
             self.onRender()
         else:
             self.ui.button_previous.setEnabled(False)
+            self.ui.input_message.setEnabled(False)
             if self.paper.questions:
                 self.ui.button_next.setEnabled(True)
             self.ui.button_answer.setEnabled(False)
             self.signal.clear_input_box.emit()
-            self.signal.set_output_box.emit(f"<h2>{self.paper.title}</h2>"
+            self.signal.set_output_box.emit(f"<h2>{self.paper.title}</h2>\n"
+                                            f"<p>考试开始时间：{self.exam.start_time.astimezone(local_timezone)}</p>"
+                                            f"<p>考试结束时间：{self.exam.end_time.astimezone(local_timezone)}</p>"
+                                            f"<p>试卷题目数量：{len(self.paper.questions)}</p>"
+                                            f"<p>试卷总分：{sum([question.score for question in self.paper.questions])}</p>"
                                             f"<p>点选 <font color='blue'>下一题</font> 以进入第一题的回答。</p>")
 
     def onNext(self) -> None:
         # 将当前题目的索引加1
         self.index += 1
-        self.ui.input_message.setEnabled(False)
+        self.ui.input_message.setEnabled(True)
         self.ui.button_previous.setEnabled(True)
         self.ui.button_answer.setEnabled(True)
         if self.index != len(self.paper.questions) - 1:  # 如果没有到达最后一题
@@ -241,6 +262,7 @@ class LatexamApplication(QMainWindow):
                                             f"<p>{self.paper.questions[self.index].title}</p>")
         self.signal.set_input_box.emit(self.sheet.answers[self.index])
 
+
     def onAnswer(self) -> None:
         if self.paper.questions[self.index].type == "objective":
             answer = self.ui.input_message.toPlainText().strip()
@@ -256,15 +278,22 @@ class LatexamApplication(QMainWindow):
             self.sheet.answers[self.index] = self.ui.input_message.toPlainText()
         self.onRender()
 
+    def sendDialog(self, content: str) -> None:
+        QMessageBox.information(self, "Latexam - 提示", content)
+
     def startExam(self) -> None:
-        QMessageBox.information(self, "Latexam - 提示", "考试开始！")
+        self.signal.send_dialog.emit("考试开始！")
         self.signal.set_output_box.emit(f"<h2>{self.paper.title}</h2>\n"
+                                        f"<p>考试开始时间：{self.exam.start_time.astimezone(local_timezone)}</p>"
+                                        f"<p>考试结束时间：{self.exam.end_time.astimezone(local_timezone)}</p>"
+                                        f"<p>试卷题目数量：{len(self.paper.questions)}</p>"
+                                        f"<p>试卷总分：{sum([question.score for question in self.paper.questions])}</p>"
                                         f"<p>点选 <font color='blue'>下一题</font> 以进入第一题的回答。</p>")
         self.signal.set_input_box.emit("")
         self.ui.button_answer.setEnabled(False)
         self.ui.button_next.setEnabled(True)
         self.ui.button_previous.setEnabled(False)
-        self.ui.input_message.setEnabled(True)
+        self.ui.input_message.setEnabled(False)
 
     def endExam(self) -> None:
         self.onAnswer()  # 保存未保存更改
@@ -272,16 +301,15 @@ class LatexamApplication(QMainWindow):
         self.ui.button_next.setEnabled(False)
         self.ui.button_previous.setEnabled(False)
         self.ui.input_message.setEnabled(False)
-        QMessageBox.information(self, "Latexam - 提示", "考试结束，请停止答题！\n"
-                                                        "请按 OK 键以开始上传答题卡。")
-        request = self.client.post(f"{self.address}/api/v1/upload_sheet", json=self.sheet.json())
+        self.signal.send_dialog.emit("考试结束，请停止答题！\n请按 OK 键以开始上传答题卡。")
+        request = self.client.post(f"{self.address}/api/v1/upload_sheet", content=self.sheet.json())
         if request.status_code == 200:
-            QMessageBox.information(self, "Latexam - 成功", f"考生 {self.sheet.student.uid} 的答题卡上传成功！")
+            self.signal.send_dialog.emit(f"考生 {self.sheet.student.uid} 的答题卡上传成功！")
         else:
             with open(os.path.join(os.getcwd(), "papers", f"{self.number}.les"), "w+") as file:
                 file.write(self.sheet.json())
-            QMessageBox.warning(self, "Latexam - 失败", f"答题卡上传失败，服务器返回了错误：{request.json()['detail']}\n"
-                                                        f"请与考场教师取得联系！相关文件已保存在客户端文件夹/papers/{self.number}.les中")
+            self.signal.send_dialog.emit(f"答题卡上传失败，服务器返回了错误：{request.json()['detail']}\n"
+                                                     f"请与考场教师取得联系！相关文件已保存在客户端文件夹/papers/{self.number}.les中")
 
     def threadTime(self) -> None:
         while 1:
