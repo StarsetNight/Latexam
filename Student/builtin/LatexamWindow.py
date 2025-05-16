@@ -694,6 +694,7 @@ class Ui_LatexamWindow(object):
 
         self.button_previous = QPushButton(self.centralwidget)
         self.button_previous.setObjectName(u"button_previous")
+        self.button_previous.setEnabled(False)
         self.button_previous.setMinimumSize(QSize(60, 25))
         self.button_previous.setMaximumSize(QSize(60, 25))
 
@@ -701,6 +702,7 @@ class Ui_LatexamWindow(object):
 
         self.button_next = QPushButton(self.centralwidget)
         self.button_next.setObjectName(u"button_next")
+        self.button_next.setEnabled(False)
         self.button_next.setMinimumSize(QSize(60, 25))
         self.button_next.setMaximumSize(QSize(60, 25))
 
@@ -708,6 +710,7 @@ class Ui_LatexamWindow(object):
 
         self.button_answer = QPushButton(self.centralwidget)
         self.button_answer.setObjectName(u"button_answer")
+        self.button_answer.setEnabled(False)
         self.button_answer.setMinimumSize(QSize(60, 25))
         self.button_answer.setMaximumSize(QSize(60, 25))
 
@@ -739,8 +742,11 @@ class Ui_LatexamWindow(object):
         self.menu_about = QMenu(self.menubar)
         self.menu_about.setObjectName(u"menu_about")
         LatexamWindow.setMenuBar(self.menubar)
-        QWidget.setTabOrder(self.input_message, self.output_message)
-        QWidget.setTabOrder(self.output_message, self.output_status)
+        QWidget.setTabOrder(self.output_status, self.output_message)
+        QWidget.setTabOrder(self.output_message, self.input_message)
+        QWidget.setTabOrder(self.input_message, self.button_previous)
+        QWidget.setTabOrder(self.button_previous, self.button_next)
+        QWidget.setTabOrder(self.button_next, self.button_answer)
 
         self.menubar.addAction(self.menu_session.menuAction())
         self.menubar.addAction(self.menu_about.menuAction())

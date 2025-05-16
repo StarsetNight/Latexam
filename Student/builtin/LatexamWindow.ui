@@ -716,6 +716,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
             </item>
             <item>
              <widget class="QPushButton" name="button_previous">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="minimumSize">
                <size>
                 <width>60</width>
@@ -735,6 +738,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
             </item>
             <item>
              <widget class="QPushButton" name="button_next">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="minimumSize">
                <size>
                 <width>60</width>
@@ -754,6 +760,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
             </item>
             <item>
              <widget class="QPushButton" name="button_answer">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="minimumSize">
                <size>
                 <width>60</width>
@@ -846,9 +855,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
   </action>
  </widget>
  <tabstops>
-  <tabstop>input_message</tabstop>
-  <tabstop>output_message</tabstop>
   <tabstop>output_status</tabstop>
+  <tabstop>output_message</tabstop>
+  <tabstop>input_message</tabstop>
+  <tabstop>button_previous</tabstop>
+  <tabstop>button_next</tabstop>
+  <tabstop>button_answer</tabstop>
  </tabstops>
  <resources>
   <include location="Latexam.qrc"/>

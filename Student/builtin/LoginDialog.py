@@ -718,7 +718,8 @@ class Ui_LoginWindow(object):
         LoginWindow.setCentralWidget(self.centralwidget)
         QWidget.setTabOrder(self.input_server, self.input_name)
         QWidget.setTabOrder(self.input_name, self.input_number)
-        QWidget.setTabOrder(self.input_number, self.key_login)
+        QWidget.setTabOrder(self.input_number, self.input_password)
+        QWidget.setTabOrder(self.input_password, self.key_login)
         QWidget.setTabOrder(self.key_login, self.key_cancel)
 
         self.retranslateUi(LoginWindow)

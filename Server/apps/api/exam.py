@@ -42,7 +42,7 @@ async def _(sheet: AnswerSheet, token: Student = Depends(verify_student)):
 
 
 @exam_api.post("/upload_score")
-async def _(data: ScoreData, token: Student = Depends(verify_student)):
-    server.scores[token.uid] = data.score
+async def _(data: ScoreData):
+    server.scores[data.uid] = data.score
     return Results(recode=200, msg="更新成功")
 

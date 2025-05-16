@@ -20,6 +20,7 @@ class LoginData(BaseData):
 
 
 class ScoreData(BaseData):
+    uid: str
     score: int
 
 
