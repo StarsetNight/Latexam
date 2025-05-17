@@ -6,7 +6,7 @@ from typing import Any
 
 
 class TokenData(BaseModel):
-    uid: int
+    uid: str
     exp: datetime | None = None
 
 
@@ -15,7 +15,7 @@ class BaseData(BaseModel):
 
 
 class LoginData(BaseData):
-    uid: int
+    uid: str
     password: str
 
 

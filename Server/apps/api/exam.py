@@ -25,14 +25,14 @@ async def _(token: StudentToken = Depends(verify_student)):
 
 
 @exam_api.get("/get_student_sheet")
-async def _(student_uid: int, token = Depends(verify_admin)):
+async def _(student_uid: str, token = Depends(verify_admin)):
     if student_uid not in server.get_sheet_uids():
         return Results(recode=401, msg="没有相应的答题卡")
     return Results(msg="查询成功！", data=server.get_student_sheet(student_uid))
 
 
 @exam_api.get("/get_student_score")
-async def _(student_uid: int, token = Depends(verify_admin)):
+async def _(student_uid: str, token = Depends(verify_admin)):
     if student_uid not in server.get_score_uids():
         return Results(recode=401, msg="成绩未设定")
     return ScoreResult(recode=200, score=server.get_student_score(student_uid))
@@ -48,7 +48,7 @@ async def _(sheet: AnswerSheet, token: Student = Depends(verify_student)):
     score = 0
     for index, question in enumerate(server.exam.paper.questions):
         if question.type == "objective":
-            if sheet.answers[index] == sorted("".join([option_str_[question.options.index(i)] for i in [i for i in question.options if i.correct]])):
+            if sheet.answers[index] == "".join(sorted([option_str_[question.options.index(i)] for i in [i for i in question.options if i.correct]])):
                 score += question.score
     server.scores[sheet.student.uid] = (score, False)
     return Results(recode=200, msg="成功！")

@@ -44,7 +44,7 @@ class Paper(BaseModel):
 
 
 class Student(BaseModel):
-    uid: int
+    uid: str
     nickname: str  # 名字
     password: str
 

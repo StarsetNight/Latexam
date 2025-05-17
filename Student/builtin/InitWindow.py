@@ -142,6 +142,8 @@ class LatexamApplication(QMainWindow):
             self.setWindowTitle(f"Latexam 考试系统 {VERSION} - 在线")
             self.online = True
             self.username = response.data.nickname
+            for top_index in range(1, 3):
+                self.ui.output_status.topLevelItem(top_index).takeChildren()
         else:
             QMessageBox.warning(self, "Latexam - 警告", f"无法登录到 Latexam 服务器。\n"
                                                         f"服务器报告的信息：{response.msg}")
@@ -262,7 +264,6 @@ class LatexamApplication(QMainWindow):
                                             f"<p>{self.paper.questions[self.index].title}</p>")
         self.signal.set_input_box.emit(self.sheet.answers[self.index])
 
-
     def onAnswer(self) -> None:
         if self.paper.questions[self.index].type == "objective":
             answer = self.ui.input_message.toPlainText().strip()
@@ -282,6 +283,7 @@ class LatexamApplication(QMainWindow):
         QMessageBox.information(self, "Latexam - 提示", content)
 
     def startExam(self) -> None:
+        self.index = -1
         self.signal.send_dialog.emit("考试开始！")
         self.signal.set_output_box.emit(f"<h2>{self.paper.title}</h2>\n"
                                         f"<p>考试开始时间：{self.exam.start_time.astimezone(local_timezone)}</p>"
@@ -296,7 +298,8 @@ class LatexamApplication(QMainWindow):
         self.ui.input_message.setEnabled(False)
 
     def endExam(self) -> None:
-        self.onAnswer()  # 保存未保存更改
+        if self.index != -1:
+            self.onAnswer()  # 保存未保存更改
         self.ui.button_answer.setEnabled(False)
         self.ui.button_next.setEnabled(False)
         self.ui.button_previous.setEnabled(False)
@@ -312,6 +315,8 @@ class LatexamApplication(QMainWindow):
                                                      f"请与考场教师取得联系！相关文件已保存在客户端文件夹/papers/{self.number}.les中")
 
     def threadTime(self) -> None:
+        # 先sleep到整秒
+        time.sleep(time.time() - int(time.time()))
         while 1:
             self.ui.output_status.topLevelItem(0).child(0).setText(0, str(datetime.now().strftime("%H:%M:%S")))
             if datetime.now().second == 0 and self.online:  # 每分钟保存一次答题卡

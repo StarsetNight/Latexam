@@ -908,6 +908,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <addaction name="action_savepaper"/>
     <addaction name="action_fileexam"/>
     <addaction name="action_judgement"/>
+    <addaction name="action_getscore"/>
    </widget>
    <addaction name="menu_session"/>
    <addaction name="menu_edit"/>
@@ -966,6 +967,11 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <action name="action_judgement">
    <property name="text">
     <string>批改考试试卷</string>
+   </property>
+  </action>
+  <action name="action_getscore">
+   <property name="text">
+    <string>查询分数</string>
    </property>
   </action>
  </widget>

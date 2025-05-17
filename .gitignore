@@ -176,3 +176,8 @@ cython_debug/
 # 与项目无关的目录
 Maintainer/papers/
 Maintainer/log/
+Server/database/
+Server/log/
+Server/papers/
+Student/log/
+Student/papers/

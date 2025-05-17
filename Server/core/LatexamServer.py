@@ -36,19 +36,19 @@ class LatexamServer:
         self.salt: str = uuid4().hex
         self.admin_password: str = hashlib.sha256(admin_password.encode("utf-8")).hexdigest()
         self.sheets: list[AnswerSheet] = []
-        self.scores: dict[int, tuple[int, bool]] = {}    # uid为key，分数和是否主观题阅卷为value
+        self.scores: dict[str, tuple[int, bool]] = {}    # uid为key，分数和是否主观题阅卷为value
 
     def run(self, host: str = "0.0.0.0", port: int = 8080):
         run(self.app, host=host, port=port)
 
-    def get_sheet_uids(self) -> list[int]:
+    def get_sheet_uids(self) -> list[str]:
         return [i.student.uid for i in self.sheets]
 
-    def get_student_sheet(self, uid: int) -> AnswerSheet:
+    def get_student_sheet(self, uid: str) -> AnswerSheet:
         return [i for i in self.sheets if i.student.uid == uid][0]
 
-    def get_score_uids(self) -> list[int]:
+    def get_score_uids(self) -> list[str]:
         return [i for i in self.scores.keys()]
 
-    def get_student_score(self, student_uid: int) -> int:
+    def get_student_score(self, student_uid: str) -> int:
         return self.scores[student_uid][0]

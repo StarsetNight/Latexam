@@ -30,10 +30,10 @@ async def _(login: LoginData, res: Response, exam: Exam = Depends(verify_exam_st
 
 @login_api.post("/admin_login")
 async def _(login: LoginData, res: Response):
-    if login.uid != 0:
+    if login.uid != "0":
         return LoginResults(success=False, msg="学生账号禁止通过管理员登录接口登录")
     if not compare_digest(server.admin_password, login.password):
         return LoginResults(success=False, msg="密码错误")
     cookie = AdminToken(token=sha256(f"{server.admin_password}{server.salt}".encode("utf-8")).hexdigest())
     res.set_cookie("token", b64encode(cookie.json().encode("utf-8")).decode("utf-8"), expires=datetime.now(timezone.utc)+timedelta(days=10))
-    return LoginResults(success=True, data=Student(uid=0, password=server.admin_password, nickname="admin"))
+    return LoginResults(success=True, data=Student(uid="0", password=server.admin_password, nickname="admin"))
