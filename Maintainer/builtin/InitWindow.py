@@ -77,11 +77,6 @@ class LatexamApplication(QMainWindow):
         if not os.path.exists("papers/"):
             os.mkdir("papers")
 
-        # FIXME 测试用
-        self.address = "http://127.0.0.1:8080"
-        self.password = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
-        self.onConnect()
-
     def bind(self):
         self.signal.set_input_box.connect(self.ui.input_message.setPlainText)
         self.signal.clear_input_box.connect(self.ui.input_message.clear)
@@ -118,6 +113,8 @@ class LatexamApplication(QMainWindow):
                 self.onEditExam()
             case "批改考试试卷":
                 self.onMarkExam()
+            case "查询分数":
+                self.onGetScore()
             case "关于Latexam":
                 self.child_window = AboutApplication()
                 self.child_window.show()
@@ -192,6 +189,7 @@ class LatexamApplication(QMainWindow):
         with open(os.path.join(directory, "paper.lep"), "r", encoding="utf-8") as file:
             self.paper = Paper.parse_raw(file.read())
             self.paper_path = directory
+        self.index = -1
         self.ui.text_status.setText("首页")
         self.signal.set_output_box.emit(f"<h2>{self.paper.title}</h2>"
                                         f"<p><font color='grey'>序列号：{self.paper.serial_number}</font></p>"
@@ -209,13 +207,14 @@ class LatexamApplication(QMainWindow):
             QMessageBox.warning(self, "Latexam - 警告", "没有试卷被打开。")
             return
         with open(os.path.join(self.paper_path, "paper.lep"), "w", encoding="utf-8") as file:
-            file.write(self.paper.json(ensure_ascii=False))
+            file.write(self.paper.json())
             QMessageBox.information(self, "Latexam - 保存试卷", f"试卷 {self.paper.title} 已保存。")
 
     def onEditExam(self) -> None:
         if not self.online:
             QMessageBox.warning(self, "Latexam - 警告", "请先连接到Latexam服务器。")
             return
+        self.index = -1
         self.ui.input_message.setEnabled(False)
         self.ui.button_send.setEnabled(False)
         self.ui.button_next.setEnabled(False)
@@ -248,6 +247,7 @@ class LatexamApplication(QMainWindow):
         if not self.online:
             QMessageBox.warning(self, "Latexam - 警告", "请先连接到Latexam服务器。")
             return
+        self.index = -1
         self.ui.input_message.setEnabled(False)
         self.ui.button_send.setEnabled(False)
         self.ui.button_next.setEnabled(False)
@@ -282,6 +282,27 @@ class LatexamApplication(QMainWindow):
         self.ui.button_next.setEnabled(True)
 
         self.score_list = [0] * len(self.sheet.answers)
+
+    def onGetScore(self) -> None:
+        if not self.online:
+            QMessageBox.warning(self, "Latexam - 警告", "请先连接到Latexam服务器。")
+            return
+
+        # 首先获取想要查看的考生准考证号
+        number: str = QInputDialog.getText(self, "Latexam - 查看成绩", "请输入考生准考证号")[0]
+        if not number:
+            return
+        if not number.isdigit():
+            QMessageBox.warning(self, "Latexam - 警告", "准考证号必须为数字。")
+            return
+        request = self.client.get(
+            url=f"{self.address}/api/v1/get_student_score",
+            params={"student_uid": number}
+            )
+        if request.status_code == 200:
+            QMessageBox.information(self, "Latexam - 成绩", f"考生 {number} 的成绩为 {request.json()['score']} 分。")
+        else:
+            QMessageBox.warning(self, "Latexam - 警告", "无法获取成绩。")
 
     def onPrevious(self) -> None:
         # 将当前题目的索引减1
@@ -484,7 +505,7 @@ class LatexamApplication(QMainWindow):
                 if request.status_code == 200:
                     QMessageBox.information(self, "成功", f"考生 {self.sheet.student.uid} 的分数上传成功！")
                 else:
-                    QMessageBox.warning(self, "失败", f"分数上传失败，服务器返回了错误：{request.json()['detail']}")
+                    QMessageBox.warning(self, "失败", f"分数上传失败，服务器返回了错误：{request.json()['msg']}")
 
     def onEdit(self) -> None:
         if self.mode == "paper":

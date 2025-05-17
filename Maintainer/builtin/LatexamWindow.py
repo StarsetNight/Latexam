@@ -639,6 +639,8 @@ class Ui_LatexamWindow(object):
         self.action_savepaper.setObjectName(u"action_savepaper")
         self.action_judgement = QAction(LatexamWindow)
         self.action_judgement.setObjectName(u"action_judgement")
+        self.action_getscore = QAction(LatexamWindow)
+        self.action_getscore.setObjectName(u"action_getscore")
         self.centralwidget = QWidget(LatexamWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout_3 = QHBoxLayout(self.centralwidget)
@@ -808,6 +810,7 @@ class Ui_LatexamWindow(object):
         self.menu_edit.addAction(self.action_savepaper)
         self.menu_edit.addAction(self.action_fileexam)
         self.menu_edit.addAction(self.action_judgement)
+        self.menu_edit.addAction(self.action_getscore)
 
         self.retranslateUi(LatexamWindow)
         self.menubar.triggered.connect(LatexamWindow.triggeredMenubar)
@@ -835,6 +838,7 @@ class Ui_LatexamWindow(object):
         self.action_fileexam.setText(QCoreApplication.translate("LatexamWindow", u"\u65b0\u5efa/\u7f16\u8f91\u8003\u8bd5", None))
         self.action_savepaper.setText(QCoreApplication.translate("LatexamWindow", u"\u4fdd\u5b58\u8bd5\u5377", None))
         self.action_judgement.setText(QCoreApplication.translate("LatexamWindow", u"\u6279\u6539\u8003\u8bd5\u8bd5\u5377", None))
+        self.action_getscore.setText(QCoreApplication.translate("LatexamWindow", u"\u67e5\u8be2\u5206\u6570", None))
 
         __sortingEnabled = self.output_status.isSortingEnabled()
         self.output_status.setSortingEnabled(False)
